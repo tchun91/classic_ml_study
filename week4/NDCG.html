@@ -1,0 +1,867 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Understanding NDCG (Normalized Discounted Cumulative Gain) &#8212; My sample book</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'week4/NDCG';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="1. Introduction to Semantic Search" href="Semantic%20Search.html" />
+    <link rel="prev" title="Market Basket Analysis (MBA)" href="Market_Basket_Analysis.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="My sample book - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="My sample book - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Welcome to your Jupyter Book
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Week 1</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../week1/1.NaiveBayes.html">What is Naive Bayes Classifier?</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../week1/2.KNN.html">K-Nearest Neighbor(KNN) Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week1/Linear_Regression.html"><strong>Linear Regression</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week1/Logistic_Regression.html">Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week1/Regularization.html">L1 and L2 Regularization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Week 2</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../week2/1.DecisionTree.html">What is Decision Tree?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week2/2.PCA.html">What is Principal Component Analysis?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week2/3.Hierarchical%20Clustering.html">What is Hierarchical Clustering?</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../week2/Gradient%20Boosting.html"><strong>Gradient Boosting Overview</strong></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../week2/Kmeans.html">K-means Clustering</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Week 3</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../week3/1.svm.html">What is Support Vector Machine Algorithm?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week3/CatBoost.html">CatBoost: Concept and Mathematical Implementation</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../week3/Random_Forest.html">Random forest</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Week 4</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="1.collaborative_filtering.html">What is Collaborative Filtering?</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="Market_Basket_Analysis.html">Market Basket Analysis (MBA)</a></li>
+
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#"><strong>Understanding NDCG (Normalized Discounted Cumulative Gain)</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Semantic%20Search.html">1. Introduction to Semantic Search</a></li>
+
+
+
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Week 5</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../week5/3.%20finetune_practice.html">1. What are the Training types of each encoder and decoder models?</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../week5/TF-IDF%2C%20BoW%2C%20Faiss.html">TF-IDF</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="../week5/Transformer%2C_LoRA.html">Set Up Hugging Face Space Environment</a></li>
+
+
+
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fweek4/NDCG.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/week4/NDCG.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Understanding NDCG (Normalized Discounted Cumulative Gain)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction-to-ndcg"><strong>1. Introduction to NDCG</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-concepts"><strong>2. Key Concepts</strong></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discounted-cumulative-gain-dcg"><strong>2.1 Discounted Cumulative Gain (DCG)</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-expression"><strong>Mathematical Expression</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pros"><strong>Pros:</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cons"><strong>Cons:</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ideal-discounted-cumulative-gain-idcg"><strong>2.2 Ideal Discounted Cumulative Gain (IDCG)</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><strong>Mathematical Expression</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><strong>Pros:</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><strong>Cons:</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#normalized-discounted-cumulative-gain-ndcg"><strong>2.3 Normalized Discounted Cumulative Gain (NDCG)</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><strong>Mathematical Expression</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5"><strong>Pros:</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6"><strong>Cons:</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-ndcg"><strong>3. When to Use NDCG</strong></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#search-engines"><strong>3.1 Search Engines</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommender-systems"><strong>3.2 Recommender Systems</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ranking-algorithms"><strong>3.3 Ranking Algorithms</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-calculation-of-dcg-idcg-and-ndcg"><strong>4. Example Calculation of DCG, IDCG, and NDCG</strong></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-data"><strong>4.1. Example Data</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calculate-dcg"><strong>4.2. Calculate DCG</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calculate-idcg"><strong>4.3. Calculate IDCG</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calculate-ndcg"><strong>4.4. Calculate NDCG</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-of-results"><strong>4.5 Summary of Results</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary"><strong>5. Summary</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#python-code-implementation">Python Code Implementation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-reading-resources">Additional Reading Resources:</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="understanding-ndcg-normalized-discounted-cumulative-gain">
+<h1><strong>Understanding NDCG (Normalized Discounted Cumulative Gain)</strong><a class="headerlink" href="#understanding-ndcg-normalized-discounted-cumulative-gain" title="Link to this heading">#</a></h1>
+<section id="introduction-to-ndcg">
+<h2><strong>1. Introduction to NDCG</strong><a class="headerlink" href="#introduction-to-ndcg" title="Link to this heading">#</a></h2>
+<p><strong>NDCG</strong> is a metric used to evaluate the effectiveness of search engines and recommendation systems. It measures how well a system ranks relevant items higher than irrelevant ones. It is particularly useful in situations where the relevance of items can vary and needs to be considered in a ranked list.</p>
+</section>
+<hr class="docutils" />
+<section id="key-concepts">
+<h2><strong>2. Key Concepts</strong><a class="headerlink" href="#key-concepts" title="Link to this heading">#</a></h2>
+<section id="discounted-cumulative-gain-dcg">
+<h3><strong>2.1 Discounted Cumulative Gain (DCG)</strong><a class="headerlink" href="#discounted-cumulative-gain-dcg" title="Link to this heading">#</a></h3>
+<p><strong>DCG</strong> is a measure of the usefulness of a document based on its position in the ranking list. It takes into account both the relevance of the document and its position in the list. The gain of a document is “discounted” logarithmically, meaning that a document appearing lower in the list contributes less to the DCG score.</p>
+<br/>
+</section>
+<section id="mathematical-expression">
+<h3><strong>Mathematical Expression</strong><a class="headerlink" href="#mathematical-expression" title="Link to this heading">#</a></h3>
+<p>The DCG for a set of retrieved documents is given by:</p>
+<div class="math notranslate nohighlight">
+\[ 
+\text{DCG}_p = \frac{\text{rel}_1}{\log_2(2)} + \frac{\text{rel}_2}{\log_2(3)} + \frac{\text{rel}_3}{\log_2(4)} + \cdots + \frac{\text{rel}_p}{\log_2(p+1)} 
+\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\text{rel}_i\)</span> is the relevance score of the document at position <span class="math notranslate nohighlight">\(p\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(p\)</span> is the position up to which DCG is calculated.</p></li>
+</ul>
+</section>
+<section id="pros">
+<h3><strong>Pros:</strong><a class="headerlink" href="#pros" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Intuitive:</strong> DCG is easy to understand and calculate.</p></li>
+<li><p><strong>Focus on Position:</strong> It takes into account the position of relevant documents, giving higher scores to documents appearing earlier in the list.</p></li>
+</ul>
+</section>
+<section id="cons">
+<h3><strong>Cons:</strong><a class="headerlink" href="#cons" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Absolute Scores:</strong> DCG values are absolute and can be difficult to interpret across different queries or datasets.</p></li>
+</ul>
+<br/>
+</section>
+<hr class="docutils" />
+<section id="ideal-discounted-cumulative-gain-idcg">
+<h3><strong>2.2 Ideal Discounted Cumulative Gain (IDCG)</strong><a class="headerlink" href="#ideal-discounted-cumulative-gain-idcg" title="Link to this heading">#</a></h3>
+<p><strong>IDCG</strong> is the DCG score of the ideal ranking, where documents are ordered by their relevance in descending order. It serves as the baseline for measuring the effectiveness of the actual ranking.</p>
+<br/>
+</section>
+<section id="id1">
+<h3><strong>Mathematical Expression</strong><a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p>The IDCG is calculated similarly to DCG but with the documents sorted by relevance:</p>
+<div class="math notranslate nohighlight">
+\[ 
+\text{IDCG}_p = \frac{\text{rel}_{\text{ideal}_1}}{\log_2(2)} + \frac{\text{rel}_{\text{ideal}_2}}{\log_2(3)} + \frac{\text{rel}_{\text{ideal}_3}}{\log_2(4)} + \cdots + \frac{\text{rel}_{\text{ideal}_p}}{\log_2(p+1)} 
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\text{rel}_{\text{ideal}_p}\)</span> is the relevance score of the document at position <span class="math notranslate nohighlight">\(p\)</span> in the ideal ranking.</p>
+</section>
+<section id="id2">
+<h3><strong>Pros:</strong><a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Benchmarking:</strong> Provides a benchmark to compare the DCG of the actual ranking.</p></li>
+</ul>
+</section>
+<section id="id3">
+<h3><strong>Cons:</strong><a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Computationally Intensive:</strong> Requires knowledge of the ideal relevance order, which may not always be feasible.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="normalized-discounted-cumulative-gain-ndcg">
+<h3><strong>2.3 Normalized Discounted Cumulative Gain (NDCG)</strong><a class="headerlink" href="#normalized-discounted-cumulative-gain-ndcg" title="Link to this heading">#</a></h3>
+<p><strong>NDCG</strong> normalizes DCG by dividing it by IDCG, providing a score between 0 and 1.</p>
+<br/>
+</section>
+<section id="id4">
+<h3><strong>Mathematical Expression</strong><a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<p>The NDCG is given by:</p>
+<div class="math notranslate nohighlight">
+\[\text{NDCG}_p = \frac{\text{DCG}_p}{\text{IDCG}_p}\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\text{DCG}_p\)</span> is the Discounted Cumulative Gain at position <span class="math notranslate nohighlight">\(p\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\text{IDCG}_p\)</span> is the Ideal Discounted Cumulative Gain at position <span class="math notranslate nohighlight">\(p\)</span>.</p></li>
+</ul>
+</section>
+<section id="id5">
+<h3><strong>Pros:</strong><a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Normalization:</strong> Provides a normalized score, making it easier to compare across different queries or datasets.</p></li>
+<li><p><strong>Interpretability:</strong> Scores range from 0 to 1, which is intuitive for understanding the performance of the ranking.</p></li>
+</ul>
+</section>
+<section id="id6">
+<h3><strong>Cons:</strong><a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Dependency on Ideal Ranking:</strong> The normalization depends on the ideal ranking, which may not be available or may vary.</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="when-to-use-ndcg">
+<h2><strong>3. When to Use NDCG</strong><a class="headerlink" href="#when-to-use-ndcg" title="Link to this heading">#</a></h2>
+<br/>
+<section id="search-engines">
+<h3><strong>3.1 Search Engines</strong><a class="headerlink" href="#search-engines" title="Link to this heading">#</a></h3>
+<p>In search engines, NDCG evaluates how well search results match user queries and returns relevant results at the top of the list. A higher NDCG indicates that more relevant documents appear higher in the search results.</p>
+</section>
+<section id="recommender-systems">
+<h3><strong>3.2 Recommender Systems</strong><a class="headerlink" href="#recommender-systems" title="Link to this heading">#</a></h3>
+<p>For recommendation systems, NDCG assesses how well the recommended items align with user preferences. It ensures that highly relevant recommendations are given higher priority. (E-commerce)</p>
+</section>
+<section id="ranking-algorithms">
+<h3><strong>3.3 Ranking Algorithms</strong><a class="headerlink" href="#ranking-algorithms" title="Link to this heading">#</a></h3>
+<p>NDCG is used to compare different ranking algorithms, helping to select the one that best orders relevant items higher.</p>
+</section>
+</section>
+<section id="example-calculation-of-dcg-idcg-and-ndcg">
+<h2><strong>4. Example Calculation of DCG, IDCG, and NDCG</strong><a class="headerlink" href="#example-calculation-of-dcg-idcg-and-ndcg" title="Link to this heading">#</a></h2>
+<section id="example-data">
+<h3><strong>4.1. Example Data</strong><a class="headerlink" href="#example-data" title="Link to this heading">#</a></h3>
+<p>Consider the following relevance scores for a set of documents: <em>(note: retrieval order is Document 1, 2, 3, 4, 5)</em></p>
+<ul class="simple">
+<li><p><strong>Document 1</strong>: Relevance = 3</p></li>
+<li><p><strong>Document 2</strong>: Relevance = 2</p></li>
+<li><p><strong>Document 3</strong>: Relevance = 3</p></li>
+<li><p><strong>Document 4</strong>: Relevance = 0</p></li>
+<li><p><strong>Document 5</strong>: Relevance = 1</p></li>
+</ul>
+</section>
+<section id="calculate-dcg">
+<h3><strong>4.2. Calculate DCG</strong><a class="headerlink" href="#calculate-dcg" title="Link to this heading">#</a></h3>
+<p>The Discounted Cumulative Gain (DCG) at position <span class="math notranslate nohighlight">\(p = 5\)</span> is calculated as follows:</p>
+<div class="math notranslate nohighlight">
+\[ \text{DCG}_5 = \frac{\text{rel}_1}{\log_2(2)} + \frac{\text{rel}_2}{\log_2(3)} + \frac{\text{rel}_3}{\log_2(4)} + \frac{\text{rel}_4}{\log_2(5)} + \frac{\text{rel}_5}{\log_2(6)} \]</div>
+<p>Substitute the relevance scores:</p>
+<div class="math notranslate nohighlight">
+\[ \text{DCG}_5 = 3 + \frac{2}{\log_2(3)} + \frac{3}{\log_2(4)} + \frac{0}{\log_2(5)} + \frac{1}{\log_2(6)} \]</div>
+<div class="math notranslate nohighlight">
+\[ \text{DCG}_5 = 3 + \frac{2}{1.585} + \frac{3}{2} + \frac{0}{2.322} + \frac{1}{2.585} \]</div>
+<div class="math notranslate nohighlight">
+\[ \text{DCG}_5 \approx 3 + 1.263 + 1.5 + 0 + 0.387 \]</div>
+<div class="math notranslate nohighlight">
+\[ \text{DCG}_5 \approx 6.150 \]</div>
+</section>
+<section id="calculate-idcg">
+<h3><strong>4.3. Calculate IDCG</strong><a class="headerlink" href="#calculate-idcg" title="Link to this heading">#</a></h3>
+<p>To calculate Ideal DCG (IDCG), sort the documents by relevance in descending order:</p>
+<ul class="simple">
+<li><p><strong>Ideal Order</strong>: Document 1 (3), Document 3 (3), Document 2 (2), Document 5 (1), Document 4 (0)</p></li>
+</ul>
+<p>Then calculate IDCG at position <span class="math notranslate nohighlight">\(p = 5\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[ \text{IDCG}_5 = \frac{\text{rel}_{\text{ideal}_1}}{\log_2(2)} + \frac{\text{rel}_{\text{ideal}_2}}{\log_2(3)} + \frac{\text{rel}_{\text{ideal}_3}}{\log_2(4)} + \frac{\text{rel}_{\text{ideal}_4}}{\log_2(5)} + \frac{\text{rel}_{\text{ideal}_5}}{\log_2(6)} \]</div>
+<p>Substitute the ideal relevance scores:</p>
+<div class="math notranslate nohighlight">
+\[ \text{IDCG}_5 = \frac{3}{\log_2(2)} + \frac{3}{\log_2(3)} + \frac{2}{\log_2(4)} + \frac{1}{\log_2(5)} + \frac{0}{\log_2(6)} \]</div>
+<div class="math notranslate nohighlight">
+\[ \text{IDCG}_5 = 3 + \frac{3}{1.585} + \frac{2}{2} + \frac{1}{2.322} + 0 \]</div>
+<div class="math notranslate nohighlight">
+\[ \text{IDCG}_5 \approx 3 + 1.894 + 1 + 0.431 \]</div>
+<div class="math notranslate nohighlight">
+\[ \text{IDCG}_5 \approx 6.325 \]</div>
+</section>
+<section id="calculate-ndcg">
+<h3><strong>4.4. Calculate NDCG</strong><a class="headerlink" href="#calculate-ndcg" title="Link to this heading">#</a></h3>
+<p>The Normalized Discounted Cumulative Gain (NDCG) is the ratio of DCG to IDCG:</p>
+<div class="math notranslate nohighlight">
+\[ \text{NDCG}_5 = \frac{\text{DCG}_5}{\text{IDCG}_5} \]</div>
+<p>Substitute the calculated values:</p>
+<div class="math notranslate nohighlight">
+\[ \text{NDCG}_5 = \frac{6.150}{6.325} \]</div>
+<div class="math notranslate nohighlight">
+\[ \text{NDCG}_5 \approx 0.972 \]</div>
+</section>
+<section id="summary-of-results">
+<h3><strong>4.5 Summary of Results</strong><a class="headerlink" href="#summary-of-results" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>DCG at 5</strong>: 6.150</p></li>
+<li><p><strong>IDCG at 5</strong>: 6.325</p></li>
+<li><p><strong>NDCG at 5</strong>: 0.972</p></li>
+</ul>
+<p>This example illustrates how to calculate DCG, IDCG, and NDCG using a small set of documents. These calculations can be applied to larger datasets or different queries in a similar manner.</p>
+</section>
+</section>
+<section id="summary">
+<h2><strong>5. Summary</strong><a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>DCG, IDCG, and NDCG are fundamental metrics for evaluating ranking systems. While DCG provides a measure of the usefulness of the ranking, IDCG represents the best possible ranking. NDCG combines these measures to provide a normalized score, facilitating comparison and interpretation of ranking performance.</p></li>
+<li><p>NDCG is a powerful metric for evaluating the quality of ranked lists in search engines and recommendation systems. By considering both relevance and position, NDCG provides a comprehensive measure of ranking effectiveness.</p></li>
+</ul>
+</section>
+<section id="python-code-implementation">
+<h2>Python Code Implementation<a class="headerlink" href="#python-code-implementation" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">math</span>
+
+<span class="c1"># Example relevance scores</span>
+<span class="n">relevance_scores</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">ideal_relevance_scores</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">relevance_scores</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">calculate_dcg</span><span class="p">(</span><span class="n">relevance_scores</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="n">dcg</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">relevance_scores</span><span class="p">))):</span>
+        <span class="n">dcg</span> <span class="o">+=</span> <span class="n">relevance_scores</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dcg</span>
+
+<span class="k">def</span> <span class="nf">calculate_idcg</span><span class="p">(</span><span class="n">ideal_relevance_scores</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="n">idcg</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ideal_relevance_scores</span><span class="p">))):</span>
+        <span class="n">idcg</span> <span class="o">+=</span> <span class="n">ideal_relevance_scores</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">idcg</span>
+
+<span class="k">def</span> <span class="nf">calculate_ndcg</span><span class="p">(</span><span class="n">dcg</span><span class="p">,</span> <span class="n">idcg</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">idcg</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">dcg</span> <span class="o">/</span> <span class="n">idcg</span>
+
+<span class="c1"># Position Parameter</span>
+<span class="n">p</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="c1"># Calculate DCG and IDCG</span>
+<span class="n">dcg</span> <span class="o">=</span> <span class="n">calculate_dcg</span><span class="p">(</span><span class="n">relevance_scores</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+<span class="n">idcg</span> <span class="o">=</span> <span class="n">calculate_idcg</span><span class="p">(</span><span class="n">ideal_relevance_scores</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+<span class="n">ndcg</span> <span class="o">=</span> <span class="n">calculate_ndcg</span><span class="p">(</span><span class="n">dcg</span><span class="p">,</span> <span class="n">idcg</span><span class="p">)</span>
+
+<span class="c1"># Print results</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DCG at </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">dcg</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;IDCG at </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">idcg</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NDCG at </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">ndcg</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>DCG at 5: 6.149
+IDCG at 5: 6.323
+NDCG at 5: 0.972
+</pre></div>
+</div>
+</div>
+</div>
+<section id="additional-reading-resources">
+<h3>Additional Reading Resources:<a class="headerlink" href="#additional-reading-resources" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.geeksforgeeks.org/normalized-discounted-cumulative-gain-multilabel-ranking-metrics-ml/">https://www.geeksforgeeks.org/normalized-discounted-cumulative-gain-multilabel-ranking-metrics-ml/</a></p></li>
+<li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Discounted_cumulative_gain">https://en.wikipedia.org/wiki/Discounted_cumulative_gain</a></p></li>
+<li><p><a class="reference external" href="https://spotintelligence.com/2024/08/08/normalised-discounted-cumulative-gain-ndcg/">https://spotintelligence.com/2024/08/08/normalised-discounted-cumulative-gain-ndcg/</a></p></li>
+</ul>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./week4"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="Market_Basket_Analysis.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Market Basket Analysis (MBA)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="Semantic%20Search.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">1. Introduction to Semantic Search</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction-to-ndcg"><strong>1. Introduction to NDCG</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-concepts"><strong>2. Key Concepts</strong></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discounted-cumulative-gain-dcg"><strong>2.1 Discounted Cumulative Gain (DCG)</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-expression"><strong>Mathematical Expression</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pros"><strong>Pros:</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cons"><strong>Cons:</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ideal-discounted-cumulative-gain-idcg"><strong>2.2 Ideal Discounted Cumulative Gain (IDCG)</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><strong>Mathematical Expression</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><strong>Pros:</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><strong>Cons:</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#normalized-discounted-cumulative-gain-ndcg"><strong>2.3 Normalized Discounted Cumulative Gain (NDCG)</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><strong>Mathematical Expression</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5"><strong>Pros:</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6"><strong>Cons:</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-ndcg"><strong>3. When to Use NDCG</strong></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#search-engines"><strong>3.1 Search Engines</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommender-systems"><strong>3.2 Recommender Systems</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ranking-algorithms"><strong>3.3 Ranking Algorithms</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-calculation-of-dcg-idcg-and-ndcg"><strong>4. Example Calculation of DCG, IDCG, and NDCG</strong></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-data"><strong>4.1. Example Data</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calculate-dcg"><strong>4.2. Calculate DCG</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calculate-idcg"><strong>4.3. Calculate IDCG</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calculate-ndcg"><strong>4.4. Calculate NDCG</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-of-results"><strong>4.5 Summary of Results</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary"><strong>5. Summary</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#python-code-implementation">Python Code Implementation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-reading-resources">Additional Reading Resources:</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The Jupyter Book Community
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

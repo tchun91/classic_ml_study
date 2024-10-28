@@ -1,0 +1,78 @@
+Traceback (most recent call last):
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/nbclient/client.py", line 1305, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/nbclient/client.py", line 705, in async_execute
+    await self.async_execute_cell(
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/nbclient/client.py", line 1058, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/nbclient/client.py", line 914, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+!pip install huggingface_hub
+
+from huggingface_hub import login
+
+login(token="")
+------------------
+
+----- stdout -----
+Requirement already satisfied: huggingface_hub in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (0.26.1)
+----- stdout -----
+Requirement already satisfied: filelock in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from huggingface_hub) (3.16.1)
+Requirement already satisfied: fsspec>=2023.5.0 in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from huggingface_hub) (2024.10.0)
+Requirement already satisfied: packaging>=20.9 in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from huggingface_hub) (24.1)
+Requirement already satisfied: pyyaml>=5.1 in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from huggingface_hub) (6.0.2)
+Requirement already satisfied: requests in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from huggingface_hub) (2.32.3)
+Requirement already satisfied: tqdm>=4.42.1 in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from huggingface_hub) (4.66.5)
+Requirement already satisfied: typing-extensions>=3.7.4.3 in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from huggingface_hub) (4.11.0)
+Requirement already satisfied: charset-normalizer<4,>=2 in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from requests->huggingface_hub) (3.3.2)
+Requirement already satisfied: idna<4,>=2.5 in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from requests->huggingface_hub) (3.7)
+Requirement already satisfied: urllib3<3,>=1.21.1 in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from requests->huggingface_hub) (2.2.3)
+Requirement already satisfied: certifi>=2017.4.17 in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from requests->huggingface_hub) (2024.8.30)
+------------------
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mValueError[0m                                Traceback (most recent call last)
+Cell [0;32mIn[1], line 5[0m
+[1;32m      1[0m get_ipython()[38;5;241m.[39msystem([38;5;124m'[39m[38;5;124mpip install huggingface_hub[39m[38;5;124m'[39m)
+[1;32m      3[0m [38;5;28;01mfrom[39;00m [38;5;21;01mhuggingface_hub[39;00m [38;5;28;01mimport[39;00m login
+[0;32m----> 5[0m login(token[38;5;241m=[39m[38;5;124m"[39m[38;5;124m"[39m)
+
+File [0;32m~/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/huggingface_hub/_login.py:119[0m, in [0;36mlogin[0;34m(token, add_to_git_credential, new_session, write_permission)[0m
+[1;32m    112[0m     [38;5;28;01mif[39;00m [38;5;129;01mnot[39;00m add_to_git_credential:
+[1;32m    113[0m         logger[38;5;241m.[39minfo(
+[1;32m    114[0m             [38;5;124m"[39m[38;5;124mThe token has not been saved to the git credentials helper. Pass [39m[38;5;124m"[39m
+[1;32m    115[0m             [38;5;124m"[39m[38;5;124m`add_to_git_credential=True` in this function directly or [39m[38;5;124m"[39m
+[1;32m    116[0m             [38;5;124m"[39m[38;5;124m`--add-to-git-credential` if using via `huggingface-cli` if [39m[38;5;124m"[39m
+[1;32m    117[0m             [38;5;124m"[39m[38;5;124myou want to set the git credential as well.[39m[38;5;124m"[39m
+[1;32m    118[0m         )
+[0;32m--> 119[0m     _login(token, add_to_git_credential[38;5;241m=[39madd_to_git_credential, write_permission[38;5;241m=[39mwrite_permission)
+[1;32m    120[0m [38;5;28;01melif[39;00m is_notebook():
+[1;32m    121[0m     notebook_login(new_session[38;5;241m=[39mnew_session, write_permission[38;5;241m=[39mwrite_permission)
+
+File [0;32m~/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/huggingface_hub/_login.py:410[0m, in [0;36m_login[0;34m(token, add_to_git_credential, write_permission)[0m
+[1;32m    408[0m _save_token(token[38;5;241m=[39mtoken, token_name[38;5;241m=[39mtoken_name)
+[1;32m    409[0m [38;5;66;03m# Set active token[39;00m
+[0;32m--> 410[0m _set_active_token(token_name[38;5;241m=[39mtoken_name, add_to_git_credential[38;5;241m=[39madd_to_git_credential)
+[1;32m    411[0m logger[38;5;241m.[39minfo([38;5;124m"[39m[38;5;124mLogin successful.[39m[38;5;124m"[39m)
+[1;32m    412[0m [38;5;28;01mif[39;00m _get_token_from_environment():
+
+File [0;32m~/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/huggingface_hub/_login.py:455[0m, in [0;36m_set_active_token[0;34m(token_name, add_to_git_credential)[0m
+[1;32m    453[0m token [38;5;241m=[39m _get_token_by_name(token_name)
+[1;32m    454[0m [38;5;28;01mif[39;00m [38;5;129;01mnot[39;00m token:
+[0;32m--> 455[0m     [38;5;28;01mraise[39;00m [38;5;167;01mValueError[39;00m([38;5;124mf[39m[38;5;124m"[39m[38;5;124mToken [39m[38;5;132;01m{[39;00mtoken_name[38;5;132;01m}[39;00m[38;5;124m not found in [39m[38;5;132;01m{[39;00mconstants[38;5;241m.[39mHF_STORED_TOKENS_PATH[38;5;132;01m}[39;00m[38;5;124m"[39m)
+[1;32m    456[0m [38;5;28;01mif[39;00m add_to_git_credential:
+[1;32m    457[0m     [38;5;28;01mif[39;00m _is_git_credential_helper_configured():
+
+[0;31mValueError[0m: Token qlora not found in /Users/tchun/.cache/huggingface/stored_tokens
+

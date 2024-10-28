@@ -1,0 +1,124 @@
+Traceback (most recent call last):
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/nbclient/client.py", line 1305, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/nbclient/client.py", line 705, in async_execute
+    await self.async_execute_cell(
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/nbclient/client.py", line 1058, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/nbclient/client.py", line 914, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+import numpy as np
+from cvxopt import matrix, solvers  # Used for quadratic programming
+
+# Define the polynomial kernel function
+def polynomial_kernel(x1, x2, degree=3, coef0=1):
+    return (np.dot(x1, x2) + coef0) ** degree
+
+class SVM:
+    def __init__(self, C=1.0, kernel=polynomial_kernel, degree=3, coef0=1):
+        self.C = C  # Regularization parameter
+        self.kernel = kernel  # Kernel function
+        self.degree = degree  # Degree of polynomial kernel
+        self.coef0 = coef0  # Coefficient for polynomial kernel
+
+    def fit(self, X, y):
+        n_samples, n_features = X.shape
+
+        # Apply Kernel function
+        K = np.zeros((n_samples, n_samples))
+        for i in range(n_samples):
+            for j in range(n_samples):
+                K[i,j] = self.kernel(X[i], X[j], self.degree, self.coef0)
+        
+        # Construct the matrices for the quadratic programming problem
+        #if y is (n,1) np.outer makes it (n,n) outer product
+        #(1,2,3) outer product (1,2,3) = ([1,2,3],[2,4,6],[3,6,9])
+        P = matrix(np.outer(y, y) * K) 
+        q = matrix(-np.ones(n_samples))
+
+        #np.eye is diagonal matrix
+        #vstack concatenate matrix vertically
+        #hstack concatenate matrix vertically
+        G = matrix(np.vstack((-np.eye(n_samples), np.eye(n_samples))))
+        h = matrix(np.hstack((np.zeros(n_samples), np.ones(n_samples) * self.C)))
+        #A is y into matrix with 1xn
+        A = matrix(y, (1, n_samples), 'd')
+        b = matrix(0.0)
+
+        # Solve the quadratic programming problem using cvxopt
+        solvers.options['show_progress'] = False
+
+        #b is 0 on the right hand side
+        #P is kernal matrix
+        # q is -1 vector
+        # G is block matrix combination of identity matrices and negative identity matrices to handle contraints
+        # h is for upper and lower bound using C (Penalty regularization term in soft margin)
+        # A is a label vector (1xn)
+        solution = solvers.qp(P, q, G, h, A, b)
+        #Flattens the result matrix into 1d
+        alphas = np.ravel(solution['x'])
+
+        # Support vectors have non zero lagrange multipliers
+        #This masking operation filters out very small values of alpha
+        #1e-5 is used to select only effective data points to be considered in support vectors
+        sv = alphas > 1e-5
+        self.alphas = alphas[sv]
+        self.support_vectors_ = X[sv]
+        self.sv_y = y[sv]
+
+        # Weight vector calculation
+        self.w = np.sum(self.alphas[:, None] * self.sv_y[:, None] * self.support_vectors_, axis=0)
+
+        # Calculate bias
+        self.b = np.mean([y_k - np.sum(self.alphas * self.sv_y * K[sv_idx, sv])
+                          for sv_idx, y_k in zip(np.where(sv)[0], self.sv_y)])
+
+    def predict(self, X):
+        y_pred = np.sum(self.alphas * self.sv_y * np.array([self.kernel(sv, X, self.degree, self.coef0) for sv in self.support_vectors_]), axis=0) + self.b
+        return np.sign(y_pred)
+
+# Preprocessing Iris dataset
+from sklearn.datasets import load_iris
+
+iris = load_iris()
+X = iris.data[:100, :2]  # Only two features for visualization, and two classes for binary classification
+y = iris.target[:100]
+y = np.where(y == 0, -1, 1)  # Convert to -1 and 1
+
+# Train-test split
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
+
+# Train the SVM model with a polynomial kernel
+svm = SVM(C=1.0, kernel=polynomial_kernel, degree=3, coef0=1)
+svm.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = np.array([svm.predict(x) for x in X_test])
+accuracy = np.mean(y_pred == y_test)
+
+print("Accuracy:", accuracy)
+------------------
+
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mModuleNotFoundError[0m                       Traceback (most recent call last)
+Cell [0;32mIn[1], line 2[0m
+[1;32m      1[0m [38;5;28;01mimport[39;00m [38;5;21;01mnumpy[39;00m [38;5;28;01mas[39;00m [38;5;21;01mnp[39;00m
+[0;32m----> 2[0m [38;5;28;01mfrom[39;00m [38;5;21;01mcvxopt[39;00m [38;5;28;01mimport[39;00m matrix, solvers  [38;5;66;03m# Used for quadratic programming[39;00m
+[1;32m      4[0m [38;5;66;03m# Define the polynomial kernel function[39;00m
+[1;32m      5[0m [38;5;28;01mdef[39;00m [38;5;21mpolynomial_kernel[39m(x1, x2, degree[38;5;241m=[39m[38;5;241m3[39m, coef0[38;5;241m=[39m[38;5;241m1[39m):
+
+[0;31mModuleNotFoundError[0m: No module named 'cvxopt'
+

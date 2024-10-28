@@ -1,0 +1,1029 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>CatBoost: Concept and Mathematical Implementation &#8212; My sample book</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'week3/CatBoost';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Random forest" href="Random_Forest.html" />
+    <link rel="prev" title="What is Support Vector Machine Algorithm?" href="1.svm.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="My sample book - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="My sample book - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Welcome to your Jupyter Book
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Week 1</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../week1/1.NaiveBayes.html">What is Naive Bayes Classifier?</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../week1/2.KNN.html">K-Nearest Neighbor(KNN) Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week1/Linear_Regression.html"><strong>Linear Regression</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week1/Logistic_Regression.html">Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week1/Regularization.html">L1 and L2 Regularization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Week 2</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../week2/1.DecisionTree.html">What is Decision Tree?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week2/2.PCA.html">What is Principal Component Analysis?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week2/3.Hierarchical%20Clustering.html">What is Hierarchical Clustering?</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../week2/Gradient%20Boosting.html"><strong>Gradient Boosting Overview</strong></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../week2/Kmeans.html">K-means Clustering</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Week 3</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="1.svm.html">What is Support Vector Machine Algorithm?</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">CatBoost: Concept and Mathematical Implementation</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="Random_Forest.html">Random forest</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Week 4</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../week4/1.collaborative_filtering.html">What is Collaborative Filtering?</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="../week4/Market_Basket_Analysis.html">Market Basket Analysis (MBA)</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="../week4/NDCG.html"><strong>Understanding NDCG (Normalized Discounted Cumulative Gain)</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week4/Semantic%20Search.html">1. Introduction to Semantic Search</a></li>
+
+
+
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Week 5</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../week5/3.%20finetune_practice.html">1. What are the Training types of each encoder and decoder models?</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../week5/TF-IDF%2C%20BoW%2C%20Faiss.html">TF-IDF</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="../week5/Transformer%2C_LoRA.html">Set Up Hugging Face Space Environment</a></li>
+
+
+
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fweek3/CatBoost.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/week3/CatBoost.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>CatBoost: Concept and Mathematical Implementation</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">CatBoost: Concept and Mathematical Implementation</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#concept">Concept</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-features">Key Features</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-with-decision-trees-random-forests-and-traditional-gradient-boosting">Comparison with Decision Trees, Random Forests, and Traditional Gradient Boosting</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-implementation">Mathematical Implementation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#initialization">1. Initialization:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-calculation">2. Gradient Calculation:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ordered-boosting">3. Ordered Boosting:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#categorical-feature-handling">4. Categorical Feature Handling:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tree-building-gain-calculation">5. Tree Building (Gain calculation):</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#leaf-value-calculation">6. Leaf Value Calculation:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-update">7. Model Update:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#final-prediction">8. Final Prediction:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#symmetric-trees">9. Symmetric Trees:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#code">Code</a></li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="catboost-concept-and-mathematical-implementation">
+<h1>CatBoost: Concept and Mathematical Implementation<a class="headerlink" href="#catboost-concept-and-mathematical-implementation" title="Link to this heading">#</a></h1>
+<section id="concept">
+<h2>Concept<a class="headerlink" href="#concept" title="Link to this heading">#</a></h2>
+<p>CatBoost is an advanced gradient boosting algorithm that excels in handling categorical features. It builds a series of decision trees, each correcting the errors of its predecessors. The name “CatBoost” comes from “Categorical Boosting,” highlighting its proficiency with categorical data.</p>
+</section>
+<section id="key-features">
+<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">#</a></h2>
+<p>• Ordered Boosting:</p>
+<ul class="simple">
+<li><p>Builds trees sequentially, each focusing on correcting mistakes of previous trees</p></li>
+<li><p>Processes data points in a special order, reducing bias in learning</p></li>
+<li><p>Allows the model to learn complex patterns gradually</p></li>
+</ul>
+<p>• Ensemble Approach:</p>
+<ul class="simple">
+<li><p>Combines many trees to make a final decision</p></li>
+<li><p>Leads to more accurate and stable predictions</p></li>
+</ul>
+<p>• Controlled Randomness:</p>
+<ul class="simple">
+<li><p>Introduces randomness in feature selection and tree building</p></li>
+<li><p>Results in a more robust model that performs well on new, unseen data</p></li>
+</ul>
+<p>• Efficient Categorical Feature Handling:</p>
+<ul class="simple">
+<li><p>Uses “ordered target statistics” to handle categories efficiently</p></li>
+<li><p>Automatically combines different categories to capture complex relationships</p></li>
+<li><p>Allows deep understanding of categorical data without manual preprocessing</p></li>
+</ul>
+<p>• Symmetric Trees:</p>
+<ul class="simple">
+<li><p>Uses the same tree structure for all examples at a given iteration</p></li>
+<li><p>Reduces overfitting and improves model generalization</p></li>
+</ul>
+<section id="comparison-with-decision-trees-random-forests-and-traditional-gradient-boosting">
+<h3>Comparison with Decision Trees, Random Forests, and Traditional Gradient Boosting<a class="headerlink" href="#comparison-with-decision-trees-random-forests-and-traditional-gradient-boosting" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Better with categories: Ordered target statistics extract more information without manual encoding</p></li>
+<li><p>Reduces overfitting: Ordered boosting and symmetric trees prevent over-focus on training data</p></li>
+<li><p>Often more accurate: Unique category handling + boosting approach = higher accuracy</p></li>
+<li><p>Versatile performance: Efficient algorithms work well on various dataset sizes</p></li>
+<li><p>Interpretable: Built-in features for easy model interpretation and decision understanding</p></li>
+</ol>
+</section>
+</section>
+<section id="mathematical-implementation">
+<h2>Mathematical Implementation<a class="headerlink" href="#mathematical-implementation" title="Link to this heading">#</a></h2>
+<section id="initialization">
+<h3>1. Initialization:<a class="headerlink" href="#initialization" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[F_0(x) = \arg\min_\gamma \sum_{i=1}^n L(y_i, \gamma)\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(F_0(x)\)</span>: Initial prediction function</p></li>
+<li><p><span class="math notranslate nohighlight">\(\arg\min_\gamma\)</span>: Finds the value of <span class="math notranslate nohighlight">\(\gamma\)</span> that minimizes the following sum</p></li>
+<li><p><span class="math notranslate nohighlight">\(\sum_{i=1}^n\)</span>: Sum over all training samples (from 1 to n)</p></li>
+<li><p><span class="math notranslate nohighlight">\(L(y_i, \gamma)\)</span>: Loss function comparing true value <span class="math notranslate nohighlight">\(y_i\)</span> to a constant prediction <span class="math notranslate nohighlight">\(\gamma\)</span></p></li>
+<li><p>Finds the best constant prediction to start with, usually the mean of target values for regression or log-odds for classification.</p></li>
+<li><p>Serves as the starting point for the iterative process.</p></li>
+</ul>
+</section>
+<section id="gradient-calculation">
+<h3>2. Gradient Calculation:<a class="headerlink" href="#gradient-calculation" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[g_i = -\left[\frac{\partial L(y_i, s)}{\partial s}\right]_{s = F_{m-1}(x_i)}\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(g_i\)</span>: Gradient for the i-th sample</p></li>
+<li><p><span class="math notranslate nohighlight">\(\frac{\partial L(y_i, s)}{\partial s}\)</span>: Partial derivative of loss with respect to prediction</p></li>
+<li><p><span class="math notranslate nohighlight">\(s = F_{m-1}(x_i)\)</span>: Evaluated at the current model’s prediction</p></li>
+<li><p>Calculates how much we need to change our prediction to reduce the loss.</p></li>
+<li><p>Guides the direction of improvement for the next tree.</p></li>
+</ul>
+</section>
+<section id="ordered-boosting">
+<h3>3. Ordered Boosting:<a class="headerlink" href="#ordered-boosting" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[\tilde{g}_i = -\left[\frac{\partial L(y_i, s)}{\partial s}\right]_{s = F_{m-1}^{i-1}(x_i)}\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\tilde{g}_i\)</span>: Ordered gradient for the i-th sample</p></li>
+<li><p><span class="math notranslate nohighlight">\(F_{m-1}^{i-1}(x_i)\)</span>: Model trained on first i-1 samples in a random permutation</p></li>
+<li><p>Reduces prediction shift by using different model states for different samples.</p></li>
+<li><p>Helps prevent overfitting.</p></li>
+</ul>
+</section>
+<section id="categorical-feature-handling">
+<h3>4. Categorical Feature Handling:<a class="headerlink" href="#categorical-feature-handling" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[\text{OrderedTS}_i = \frac{\sum_{j=1}^{i-1} [x_j = x_i] \cdot y_j + a \cdot P}{\sum_{j=1}^{i-1} [x_j = x_i] + a}\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\sum_{j=1}^{i-1} [x_j = x_i]\)</span>: Count of previous samples with same category</p></li>
+<li><p><span class="math notranslate nohighlight">\(\sum_{j=1}^{i-1} [x_j = x_i] \cdot y_j\)</span>: Sum of target values for those samples</p></li>
+<li><p><span class="math notranslate nohighlight">\(a\)</span>: Smoothing parameter</p></li>
+<li><p><span class="math notranslate nohighlight">\(P\)</span>: Prior (often overall mean of target)</p></li>
+<li><p>Encodes categorical features based on their target statistics.</p></li>
+<li><p>Allows efficient processing of categorical data without manual encoding.</p></li>
+</ul>
+</section>
+<section id="tree-building-gain-calculation">
+<h3>5. Tree Building (Gain calculation):<a class="headerlink" href="#tree-building-gain-calculation" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[\text{Gain} = \sum_{j \in \{L, R\}} \frac{(\sum_{i \in j} \tilde{g}_i)^2}{\sum_{i \in j} |\tilde{g}_i|(1-|\tilde{g}_i|)} - \frac{(\sum_{i \in \text{parent}} \tilde{g}_i)^2}{\sum_{i \in \text{parent}} |\tilde{g}_i|(1-|\tilde{g}_i|)}\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\sum_{j \in \{L, R\}}\)</span>: Sum over left and right child nodes</p></li>
+<li><p><span class="math notranslate nohighlight">\((\sum_{i \in j} \tilde{g}_i)^2\)</span>: Squared sum of gradients in a node</p></li>
+<li><p><span class="math notranslate nohighlight">\(\sum_{i \in j} |\tilde{g}_i|(1-|\tilde{g}_i|)\)</span>: Sum of gradient magnitudes times their complements</p></li>
+<li><p>Last term: Same calculation for parent node</p></li>
+<li><p>Measures the improvement in the model from making a split.</p></li>
+<li><p>Helps in deciding the best way to grow the tree.</p></li>
+</ul>
+</section>
+<section id="leaf-value-calculation">
+<h3>6. Leaf Value Calculation:<a class="headerlink" href="#leaf-value-calculation" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[\text{leaf\_value} = - \frac{\sum_{i \in \text{leaf}} \tilde{g}_i}{\sum_{i \in \text{leaf}} |\tilde{g}_i|(1-|\tilde{g}_i|)}\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\sum_{i \in \text{leaf}} \tilde{g}_i\)</span>: Sum of gradients in the leaf</p></li>
+<li><p><span class="math notranslate nohighlight">\(\sum_{i \in \text{leaf}} |\tilde{g}_i|(1-|\tilde{g}_i|)\)</span>: Sum of gradient magnitudes times their complements</p></li>
+<li><p>Calculates the optimal prediction value for each leaf.</p></li>
+<li><p>Determines the output of the tree for each data point.</p></li>
+</ul>
+</section>
+<section id="model-update">
+<h3>7. Model Update:<a class="headerlink" href="#model-update" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[F_m(x) = F_{m-1}(x) + \alpha \cdot \text{tree}_m(x)\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(F_{m-1}(x)\)</span>: Previous model</p></li>
+<li><p><span class="math notranslate nohighlight">\(\alpha\)</span>: Learning rate</p></li>
+<li><p><span class="math notranslate nohighlight">\(\text{tree}_m(x)\)</span>: Prediction of the m-th tree</p></li>
+<li><p>Adds the new tree’s predictions to the existing model.</p></li>
+<li><p>Gradually improves the overall model’s performance.</p></li>
+</ul>
+</section>
+<section id="final-prediction">
+<h3>8. Final Prediction:<a class="headerlink" href="#final-prediction" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[\hat{y} = F_M(x) = F_0(x) + \alpha \sum_{m=1}^M \text{tree}_m(x)\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(F_0(x)\)</span>: Initial prediction</p></li>
+<li><p><span class="math notranslate nohighlight">\(\sum_{m=1}^M \text{tree}_m(x)\)</span>: Sum of all tree predictions</p></li>
+</ul>
+<p>For classification, this is often passed through a sigmoid:
+$<span class="math notranslate nohighlight">\(p(y=1|x) = \frac{1}{1 + e^{-F_M(x)}}\)</span>$</p>
+<ul class="simple">
+<li><p>Combines all trees to make the final prediction.</p></li>
+<li><p>For classification, converts the raw prediction to a probability between 0 and 1.</p></li>
+</ul>
+</section>
+<section id="symmetric-trees">
+<h3>9. Symmetric Trees:<a class="headerlink" href="#symmetric-trees" title="Link to this heading">#</a></h3>
+<p>While not typically represented by a specific formula, symmetric trees can be described as:</p>
+<div class="math notranslate nohighlight">
+\[\text{split}_{level} = \arg\max_{\text{feature}, \text{threshold}} \text{Gain}(\text{feature}, \text{threshold})\]</div>
+<p>Where the same split is applied across an entire level of the tree.</p>
+<ul class="simple">
+<li><p>Applied during the tree-building process (step 5)</p></li>
+<li><p>Reduces overfitting and improves model generalization</p></li>
+<li><p>Speeds up computation due to the symmetric structure</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="code">
+<h1>Code<a class="headerlink" href="#code" title="Link to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">LabelEncoder</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">log_loss</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">3</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="ne">----&gt; </span><span class="mi">3</span> <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">LabelEncoder</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;matplotlib&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;train.csv&#39;</span><span class="p">)</span>
+
+<span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Survived</th>
+      <th>Pclass</th>
+      <th>Name</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>male</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;train.csv&#39;</span><span class="p">)</span>
+
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">median</span><span class="p">(),</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;Embarked&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;Embarked&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mode</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">le</span> <span class="o">=</span> <span class="n">LabelEncoder</span><span class="p">()</span>
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;Sex&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">le</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;Sex&#39;</span><span class="p">])</span>
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;Embarked&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">le</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;Embarked&#39;</span><span class="p">])</span>
+
+<span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Pclass&#39;</span><span class="p">,</span> <span class="s1">&#39;Sex&#39;</span><span class="p">,</span> <span class="s1">&#39;Age&#39;</span><span class="p">,</span> <span class="s1">&#39;SibSp&#39;</span><span class="p">,</span> <span class="s1">&#39;Parch&#39;</span><span class="p">,</span> <span class="s1">&#39;Fare&#39;</span><span class="p">,</span> <span class="s1">&#39;Embarked&#39;</span><span class="p">]</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">features</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Survived&#39;</span><span class="p">]</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+<span class="n">initial_prediction</span> <span class="o">=</span> <span class="n">initialize</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initial prediction: </span><span class="si">{</span><span class="n">initial_prediction</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">calculate_gradient</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">y_pred</span> <span class="o">-</span> <span class="n">y</span>
+
+<span class="k">def</span> <span class="nf">ordered_boosting</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">current_predictions</span><span class="p">):</span>
+    <span class="n">gradients</span> <span class="o">=</span> <span class="n">calculate_gradient</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">current_predictions</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">gradients</span>
+
+<span class="k">def</span> <span class="nf">encode_categorical</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">encoded</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">X</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;object&#39;</span><span class="p">]):</span>
+        <span class="n">means</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">encoded</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">means</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">encoded</span>
+
+<span class="k">def</span> <span class="nf">build_tree</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">gradients</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">max_depth</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">best_feature</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="n">split_value</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">best_feature</span><span class="p">]</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
+        <span class="n">left_mask</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">best_feature</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">split_value</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;feature&#39;</span><span class="p">:</span> <span class="n">best_feature</span><span class="p">,</span>
+            <span class="s1">&#39;split&#39;</span><span class="p">:</span> <span class="n">split_value</span><span class="p">,</span>
+            <span class="s1">&#39;left&#39;</span><span class="p">:</span> <span class="n">build_tree</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">left_mask</span><span class="p">],</span> <span class="n">gradients</span><span class="p">[</span><span class="n">left_mask</span><span class="p">],</span> <span class="n">max_depth</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+            <span class="s1">&#39;right&#39;</span><span class="p">:</span> <span class="n">build_tree</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="o">~</span><span class="n">left_mask</span><span class="p">],</span> <span class="n">gradients</span><span class="p">[</span><span class="o">~</span><span class="n">left_mask</span><span class="p">],</span> <span class="n">max_depth</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tree</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">gradients</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tree</span>
+
+<span class="k">def</span> <span class="nf">calculate_leaf_values</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">gradients</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;value&#39;</span> <span class="ow">in</span> <span class="n">tree</span><span class="p">:</span>
+        <span class="n">tree</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">gradients</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">left_mask</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">tree</span><span class="p">[</span><span class="s1">&#39;feature&#39;</span><span class="p">]]</span> <span class="o">&lt;=</span> <span class="n">tree</span><span class="p">[</span><span class="s1">&#39;split&#39;</span><span class="p">]</span>
+        <span class="n">calculate_leaf_values</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">left_mask</span><span class="p">],</span> <span class="n">gradients</span><span class="p">[</span><span class="n">left_mask</span><span class="p">])</span>
+        <span class="n">calculate_leaf_values</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="o">~</span><span class="n">left_mask</span><span class="p">],</span> <span class="n">gradients</span><span class="p">[</span><span class="o">~</span><span class="n">left_mask</span><span class="p">])</span>
+
+<span class="k">def</span> <span class="nf">update_predictions</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">tree</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">predictions</span> <span class="o">+</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">predict_tree</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">tree</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">predict_tree</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;value&#39;</span> <span class="ow">in</span> <span class="n">tree</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">tree</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">left_mask</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">tree</span><span class="p">[</span><span class="s1">&#39;feature&#39;</span><span class="p">]]</span> <span class="o">&lt;=</span> <span class="n">tree</span><span class="p">[</span><span class="s1">&#39;split&#39;</span><span class="p">]</span>
+        <span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+        <span class="n">predictions</span><span class="p">[</span><span class="n">left_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">predict_tree</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">left_mask</span><span class="p">],</span> <span class="n">tree</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">])</span>
+        <span class="n">predictions</span><span class="p">[</span><span class="o">~</span><span class="n">left_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">predict_tree</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="o">~</span><span class="n">left_mask</span><span class="p">],</span> <span class="n">tree</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">predictions</span>
+
+<span class="n">n_iterations</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_train</span><span class="p">),</span> <span class="n">initial_prediction</span><span class="p">)</span>
+<span class="n">log_loss_history</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_iterations</span><span class="p">):</span>
+    <span class="n">gradients</span> <span class="o">=</span> <span class="n">ordered_boosting</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">build_tree</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">gradients</span><span class="p">)</span>
+    <span class="n">calculate_leaf_values</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">gradients</span><span class="p">)</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">update_predictions</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">tree</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">)</span>
+    
+    <span class="n">current_log_loss</span> <span class="o">=</span> <span class="n">log_loss</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+    <span class="n">log_loss_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_log_loss</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">, Log Loss: </span><span class="si">{</span><span class="n">current_log_loss</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">final_predictions</span> <span class="o">=</span> <span class="n">predictions</span> <span class="o">&gt;</span> <span class="mf">0.5</span>
+<span class="n">accuracy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">final_predictions</span> <span class="o">==</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Final training accuracy: </span><span class="si">{</span><span class="n">accuracy</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">log_loss_history</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Iteration&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Log Loss&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;CatBoost Training Progress&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Initial prediction: 0.37640449438202245
+
+Iteration 1, Log Loss: 0.6622764837479065
+Iteration 2, Log Loss: 0.663035500594776
+Iteration 3, Log Loss: 0.6642778794836117
+Iteration 4, Log Loss: 0.6685618882557525
+Iteration 5, Log Loss: 0.6688305277348335
+Iteration 6, Log Loss: 0.6767935838324144
+Iteration 7, Log Loss: 0.6861052591172807
+Iteration 8, Log Loss: 0.6861052591172807
+Iteration 9, Log Loss: 0.700346012063368
+Iteration 10, Log Loss: 0.7105384995196936
+
+Final training accuracy: 0.6235955056179775
+</pre></div>
+</div>
+<img alt="../_images/b690d4ce8f37f0d6040928e1b6e010f244959abbeadebe6d656adca235a586b0.png" src="../_images/b690d4ce8f37f0d6040928e1b6e010f244959abbeadebe6d656adca235a586b0.png" />
+</div>
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./week3"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="1.svm.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">What is Support Vector Machine Algorithm?</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="Random_Forest.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Random forest</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">CatBoost: Concept and Mathematical Implementation</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#concept">Concept</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-features">Key Features</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-with-decision-trees-random-forests-and-traditional-gradient-boosting">Comparison with Decision Trees, Random Forests, and Traditional Gradient Boosting</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-implementation">Mathematical Implementation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#initialization">1. Initialization:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-calculation">2. Gradient Calculation:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ordered-boosting">3. Ordered Boosting:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#categorical-feature-handling">4. Categorical Feature Handling:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tree-building-gain-calculation">5. Tree Building (Gain calculation):</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#leaf-value-calculation">6. Leaf Value Calculation:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-update">7. Model Update:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#final-prediction">8. Final Prediction:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#symmetric-trees">9. Symmetric Trees:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#code">Code</a></li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The Jupyter Book Community
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

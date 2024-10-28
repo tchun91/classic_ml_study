@@ -1,0 +1,1248 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>1. Introduction to Semantic Search &#8212; My sample book</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'week4/Semantic Search';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="1. What are the Training types of each encoder and decoder models?" href="../week5/3.%20finetune_practice.html" />
+    <link rel="prev" title="Understanding NDCG (Normalized Discounted Cumulative Gain)" href="NDCG.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="My sample book - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="My sample book - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Welcome to your Jupyter Book
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Week 1</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../week1/1.NaiveBayes.html">What is Naive Bayes Classifier?</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../week1/2.KNN.html">K-Nearest Neighbor(KNN) Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week1/Linear_Regression.html"><strong>Linear Regression</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week1/Logistic_Regression.html">Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week1/Regularization.html">L1 and L2 Regularization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Week 2</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../week2/1.DecisionTree.html">What is Decision Tree?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week2/2.PCA.html">What is Principal Component Analysis?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week2/3.Hierarchical%20Clustering.html">What is Hierarchical Clustering?</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../week2/Gradient%20Boosting.html"><strong>Gradient Boosting Overview</strong></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../week2/Kmeans.html">K-means Clustering</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Week 3</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../week3/1.svm.html">What is Support Vector Machine Algorithm?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week3/CatBoost.html">CatBoost: Concept and Mathematical Implementation</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../week3/Random_Forest.html">Random forest</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Week 4</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="1.collaborative_filtering.html">What is Collaborative Filtering?</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="Market_Basket_Analysis.html">Market Basket Analysis (MBA)</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="NDCG.html"><strong>Understanding NDCG (Normalized Discounted Cumulative Gain)</strong></a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">1. Introduction to Semantic Search</a></li>
+
+
+
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Week 5</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../week5/3.%20finetune_practice.html">1. What are the Training types of each encoder and decoder models?</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../week5/TF-IDF%2C%20BoW%2C%20Faiss.html">TF-IDF</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="../week5/Transformer%2C_LoRA.html">Set Up Hugging Face Space Environment</a></li>
+
+
+
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fweek4/Semantic Search.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/week4/Semantic Search.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>1. Introduction to Semantic Search</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">1. Introduction to Semantic Search</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#semantic-search-vs-traditional-keyword-based-search">1.2 Semantic Search vs. Traditional Keyword-Based Search</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#traditional-keyword-based-search">Traditional Keyword-Based Search:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#semantic-search">Semantic Search:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example:</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#key-concepts-in-semantic-search">2. Key Concepts in Semantic Search</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vector-space-model-vsm">2.1 Vector Space Model (VSM)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#embeddings-and-representation-of-text">2.2 Embeddings and Representation of Text</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-principles-of-semantic-search">3. Mathematical Principles of Semantic Search</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vector-representations">3.1 Vector Representations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#similarity-metrics">3.2 Similarity Metrics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cosine-similarity">3.2.1 Cosine Similarity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#euclidean-distance">3.2.2 Euclidean Distance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dot-product">3.2.3 Dot Product</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#term-frequency-inverse-document-frequency-tf-idf">3.3 Term Frequency-Inverse Document Frequency (TF-IDF)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#word-embeddings">3.4 Word Embeddings</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-formulation">Mathematical Formulation:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#document-embeddings">3.5 Document Embeddings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#latent-semantic-analysis-lsa">3.6 Latent Semantic Analysis (LSA)</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#models-used-in-semantic-search">4. Models Used in Semantic Search</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tf-idf-model">4.1 TF-IDF Model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-tf-idf-works-in-semantic-search">How TF-IDF Works in Semantic Search:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advantages-of-tf-idf-in-semantic-search">Advantages of TF-IDF in Semantic Search:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#word2vec">4.2 Word2Vec</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-word2vec-works-in-semantic-search">How Word2Vec Works in Semantic Search:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advantages-in-semantic-search">Advantages in Semantic Search:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Limitations:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bert-bidirectional-encoder-representations-from-transformers">4.3 BERT (Bidirectional Encoder Representations from Transformers)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-bert-works-in-semantic-search">How BERT Works in Semantic Search:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Mathematical Formulation:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Advantages in Semantic Search:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Limitations:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer-based-models-in-semantic-search">4.4 Transformer-based Models in Semantic Search</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder-only-models">4.4.1 Encoder-Only Models</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder-only-models">4.4.2 Decoder-Only Models</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder-decoder-models">4.4.3 Encoder-Decoder Models</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-different-model-architectures-matter-in-semantic-search">4.5 Why Different Model Architectures Matter in Semantic Search</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#the-semantic-search-process">5. The Semantic Search Process</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#indexing">5.1 Indexing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#steps-involved">Steps involved:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#query-processing">5.2 Query Processing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Steps involved:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#retrieval">5.3 Retrieval</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Steps involved:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ranking">5.4 Ranking</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Steps involved:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#result-presentation">5.5 Result Presentation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">Steps involved:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="introduction-to-semantic-search">
+<h1>1. Introduction to Semantic Search<a class="headerlink" href="#introduction-to-semantic-search" title="Link to this heading">#</a></h1>
+<p>Semantic search is an advanced information retrieval technique that aims to understand the intent and contextual meaning behind a user’s query, rather than simply matching keywords. This approach represents a significant leap forward from traditional keyword-based search methods, enabling more accurate and relevant results.</p>
+<section id="semantic-search-vs-traditional-keyword-based-search">
+<h2>1.2 Semantic Search vs. Traditional Keyword-Based Search<a class="headerlink" href="#semantic-search-vs-traditional-keyword-based-search" title="Link to this heading">#</a></h2>
+<section id="traditional-keyword-based-search">
+<h3>Traditional Keyword-Based Search:<a class="headerlink" href="#traditional-keyword-based-search" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Matches documents containing the exact keywords from the query.</p></li>
+<li><p>Often requires users to know the right keywords to find relevant information.</p></li>
+<li><p>Can miss relevant documents that use synonyms or related concepts.</p></li>
+<li><p>May return irrelevant results if keywords are used in different contexts.</p></li>
+</ul>
+</section>
+<section id="semantic-search">
+<h3>Semantic Search:<a class="headerlink" href="#semantic-search" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Understands the meaning behind the query and finds documents that are semantically related.</p></li>
+<li><p>Allows users to use natural language queries.</p></li>
+<li><p>Can find relevant documents even if they don’t contain the exact query terms.</p></li>
+<li><p>Considers the context of the search and the user’s intent.</p></li>
+</ul>
+</section>
+</section>
+<section id="example">
+<h2>Example:<a class="headerlink" href="#example" title="Link to this heading">#</a></h2>
+<p>Consider a user searching for “apple”.</p>
+<p>A traditional search might return results about:</p>
+<ul class="simple">
+<li><p>The fruit</p></li>
+<li><p>Apple Inc. (the tech company)</p></li>
+<li><p>Apple records (the record label)</p></li>
+<li><p>Recipes containing apples</p></li>
+<li><p>News articles mentioning “apple” in various contexts</p></li>
+</ul>
+<p>In contrast, a semantic search would attempt to understand the context:</p>
+<ul class="simple">
+<li><p>If the user has recently been browsing tech websites, it might prioritize results about Apple Inc.</p></li>
+<li><p>If the query is “how to cook an apple pie”, it would understand that the apple in question is the fruit.</p></li>
+<li><p>If the query is “apple stock price”, it would interpret this as relating to the company’s financial information.</p></li>
+</ul>
+</section>
+</section>
+<section id="key-concepts-in-semantic-search">
+<h1>2. Key Concepts in Semantic Search<a class="headerlink" href="#key-concepts-in-semantic-search" title="Link to this heading">#</a></h1>
+<section id="vector-space-model-vsm">
+<h2>2.1 Vector Space Model (VSM)<a class="headerlink" href="#vector-space-model-vsm" title="Link to this heading">#</a></h2>
+<p>The Vector Space Model is a fundamental concept in information retrieval and forms the basis for many semantic search techniques. In VSM, we represent text data (words, documents, queries) as vectors in a high-dimensional space. This mathematical representation allows us to perform various operations and comparisons on text data.</p>
+<p>Key points about VSM:</p>
+<ul class="simple">
+<li><p>Each dimension in the vector space typically corresponds to a term in the vocabulary.</p></li>
+<li><p>Documents and queries are represented as vectors in this space.</p></li>
+<li><p>The similarity between documents, or between a query and a document, can be measured by the proximity of their vector representations.</p></li>
+</ul>
+<p>Mathematically, we can represent this as follows:</p>
+<p>Let <span class="math notranslate nohighlight">\(D = \{d_1, d_2, ..., d_n\}\)</span> be a set of documents and <span class="math notranslate nohighlight">\(T = \{t_1, t_2, ..., t_m\}\)</span> be the set of terms in the vocabulary.</p>
+<p>A document <span class="math notranslate nohighlight">\(d_i\)</span> is represented as a vector:</p>
+<div class="math notranslate nohighlight">
+\[d_i = (w_{i1}, w_{i2}, ..., w_{im})\]</div>
+<p>where <span class="math notranslate nohighlight">\(w_{ij}\)</span> is the weight of term <span class="math notranslate nohighlight">\(t_j\)</span> in document <span class="math notranslate nohighlight">\(d_i\)</span>.</p>
+<p>The VSM allows us to translate the problem of determining the relevance of a document to a query into a problem of measuring the similarity between vectors. This forms the foundation for many more advanced techniques in semantic search.</p>
+</section>
+<section id="embeddings-and-representation-of-text">
+<h2>2.2 Embeddings and Representation of Text<a class="headerlink" href="#embeddings-and-representation-of-text" title="Link to this heading">#</a></h2>
+<p>Embeddings are dense vector representations of words, phrases, or entire documents that capture semantic information. The key idea behind embeddings is that words or documents with similar meanings should have similar vector representations.</p>
+<p>Characteristics of embeddings:</p>
+<ul class="simple">
+<li><p>They are typically low-dimensional (compared to the size of the vocabulary), dense vectors.</p></li>
+<li><p>Similar meanings result in vectors that are close to each other in the embedding space.</p></li>
+<li><p>They can capture complex relationships between words, such as analogies.</p></li>
+</ul>
+<p>For example, in a well-trained word embedding space:</p>
+<ul class="simple">
+<li><p>The vector for “king” - “man” + “woman” should be close to the vector for “queen”.</p></li>
+<li><p>The vector for “Paris” - “France” + “Italy” should be close to the vector for “Rome”.</p></li>
+</ul>
+<p>These embeddings form the backbone of many modern semantic search systems, allowing for more nuanced understanding and comparison of text data.</p>
+</section>
+</section>
+<section id="mathematical-principles-of-semantic-search">
+<h1>3. Mathematical Principles of Semantic Search<a class="headerlink" href="#mathematical-principles-of-semantic-search" title="Link to this heading">#</a></h1>
+<section id="vector-representations">
+<h2>3.1 Vector Representations<a class="headerlink" href="#vector-representations" title="Link to this heading">#</a></h2>
+<p>As mentioned earlier, in semantic search, we represent words, phrases, or entire documents as vectors in a high-dimensional space. This is a crucial step that allows us to apply mathematical operations to text data.</p>
+<p>Formally, each document or query is represented as a vector <span class="math notranslate nohighlight">\(\mathbf{v} \in \mathbb{R}^n\)</span>, where <span class="math notranslate nohighlight">\(n\)</span> is the dimensionality of the embedding space.</p>
+<p>The choice of how to create these vector representations is a key factor in the performance of a semantic search system. Various methods exist, from simple techniques like bag-of-words to more advanced approaches like word embeddings and contextual embeddings.</p>
+</section>
+<section id="similarity-metrics">
+<h2>3.2 Similarity Metrics<a class="headerlink" href="#similarity-metrics" title="Link to this heading">#</a></h2>
+<p>Once we have vector representations, we need ways to measure how similar or different these vectors are. This is crucial for determining which documents are most relevant to a given query. Several similarity metrics are commonly used in semantic search:</p>
+<section id="cosine-similarity">
+<h3>3.2.1 Cosine Similarity<a class="headerlink" href="#cosine-similarity" title="Link to this heading">#</a></h3>
+<p>Cosine similarity measures the cosine of the angle between two vectors. It’s widely used because it’s efficient to calculate and is not affected by the magnitude of the vectors (only their direction matters).</p>
+<div class="math notranslate nohighlight">
+\[\text{cosine\_similarity}(\mathbf{v_1}, \mathbf{v_2}) = \frac{\mathbf{v_1} \cdot \mathbf{v_2}}{\|\mathbf{v_1}\| \|\mathbf{v_2}\|}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\cdot\)</span> denotes the dot product and <span class="math notranslate nohighlight">\(\|\mathbf{v}\|\)</span> is the Euclidean norm of vector <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>.</p>
+</section>
+<section id="euclidean-distance">
+<h3>3.2.2 Euclidean Distance<a class="headerlink" href="#euclidean-distance" title="Link to this heading">#</a></h3>
+<p>Euclidean distance measures the straight-line distance between two points in Euclidean space. In the context of semantic search, a smaller distance indicates greater similarity.</p>
+<div class="math notranslate nohighlight">
+\[\text{euclidean\_distance}(\mathbf{v_1}, \mathbf{v_2}) = \|\mathbf{v_1} - \mathbf{v_2}\| = \sqrt{\sum_{i=1}^n (v_{1i} - v_{2i})^2}\]</div>
+</section>
+<section id="dot-product">
+<h3>3.2.3 Dot Product<a class="headerlink" href="#dot-product" title="Link to this heading">#</a></h3>
+<p>The dot product is another simple and efficient way to measure similarity. For normalized vectors, it’s equivalent to cosine similarity.</p>
+<div class="math notranslate nohighlight">
+\[\text{dot\_product}(\mathbf{v_1}, \mathbf{v_2}) = \mathbf{v_1} \cdot \mathbf{v_2} = \sum_{i=1}^n v_{1i} v_{2i}\]</div>
+</section>
+</section>
+<section id="term-frequency-inverse-document-frequency-tf-idf">
+<h2>3.3 Term Frequency-Inverse Document Frequency (TF-IDF)<a class="headerlink" href="#term-frequency-inverse-document-frequency-tf-idf" title="Link to this heading">#</a></h2>
+<p>TF-IDF is a statistical measure used to evaluate the importance of a word in a document relative to a collection of documents. It’s based on the idea that:</p>
+<ul class="simple">
+<li><p>Words that appear frequently in a document are important to that document (term frequency).</p></li>
+<li><p>But words that appear frequently across many documents are less discriminative (inverse document frequency).</p></li>
+</ul>
+<p>Mathematically, for a term <span class="math notranslate nohighlight">\(t\)</span> in a document <span class="math notranslate nohighlight">\(d\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[TF(t,d) = \frac{\text{Number of times } t \text{ appears in } d}{\text{Total number of terms in } d}\]</div>
+<div class="math notranslate nohighlight">
+\[IDF(t) = \log\frac{\text{Total number of documents}}{\text{Number of documents containing } t}\]</div>
+<div class="math notranslate nohighlight">
+\[TF\text{-}IDF(t,d) = TF(t,d) \times IDF(t)\]</div>
+<p>TF-IDF can be used to create document vectors, where each dimension corresponds to a term’s TF-IDF score. This method provides a good baseline for many information retrieval tasks and is still relevant in semantic search, often used in combination with more advanced techniques.</p>
+</section>
+<section id="word-embeddings">
+<h2>3.4 Word Embeddings<a class="headerlink" href="#word-embeddings" title="Link to this heading">#</a></h2>
+<p>Word embeddings are dense vector representations of words that capture semantic meaning.</p>
+<section id="mathematical-formulation">
+<h3>Mathematical Formulation:<a class="headerlink" href="#mathematical-formulation" title="Link to this heading">#</a></h3>
+<p>Let <span class="math notranslate nohighlight">\(V\)</span> be the vocabulary size and <span class="math notranslate nohighlight">\(d\)</span> be the embedding dimension. The embedding matrix <span class="math notranslate nohighlight">\(E \in \mathbb{R}^{V \times d}\)</span> contains a <span class="math notranslate nohighlight">\(d\)</span>-dimensional vector for each word in the vocabulary.</p>
+<p>For a word <span class="math notranslate nohighlight">\(w\)</span>, its embedding <span class="math notranslate nohighlight">\(e_w\)</span> is:</p>
+<div class="math notranslate nohighlight">
+\[e_w = E[w] \in \mathbb{R}^d\]</div>
+<p>Word2Vec uses two main architectures:</p>
+<ol class="arabic simple">
+<li><p>Continuous Bag of Words (CBOW): Predicts a target word given its context.</p></li>
+<li><p>Skip-gram: Predicts the context given a target word.</p></li>
+</ol>
+<p>For the Skip-gram model, the objective is to maximize:</p>
+<div class="math notranslate nohighlight">
+\[\frac{1}{T} \sum_{t=1}^T \sum_{-c \leq j \leq c, j \neq 0} \log p(w_{t+j}|w_t)\]</div>
+<p>where <span class="math notranslate nohighlight">\(c\)</span> is the size of the context window, <span class="math notranslate nohighlight">\(T\)</span> is the number of words in the corpus, and <span class="math notranslate nohighlight">\(p(w_{t+j}|w_t)\)</span> is modeled using the softmax function:</p>
+<div class="math notranslate nohighlight">
+\[p(w_O|w_I) = \frac{\exp(e_{w_O}^T e_{w_I})}{\sum_{w' \in V} \exp(e_{w'}^T e_{w_I})}\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(w_I\)</span> is the input word and <span class="math notranslate nohighlight">\(w_O\)</span> is the output (context) word.</p>
+</section>
+</section>
+<section id="document-embeddings">
+<h2>3.5 Document Embeddings<a class="headerlink" href="#document-embeddings" title="Link to this heading">#</a></h2>
+<p>Document embeddings extend the idea of word embeddings to entire documents. A simple approach is to average the word embeddings of all words in the document:</p>
+<div class="math notranslate nohighlight">
+\[d = \frac{1}{N} \sum_{i=1}^N e_{w_i}\]</div>
+<p>where <span class="math notranslate nohighlight">\(N\)</span> is the number of words in the document and <span class="math notranslate nohighlight">\(e_{w_i}\)</span> is the embedding of the <span class="math notranslate nohighlight">\(i\)</span>-th word.</p>
+<p>More sophisticated models like Doc2Vec learn document embeddings directly, similar to Word2Vec but with an additional document vector.</p>
+</section>
+<section id="latent-semantic-analysis-lsa">
+<h2>3.6 Latent Semantic Analysis (LSA)<a class="headerlink" href="#latent-semantic-analysis-lsa" title="Link to this heading">#</a></h2>
+<p>LSA is a technique that uncovers the underlying semantic structure in a document-term matrix using Singular Value Decomposition (SVD). It’s based on the idea that words used in similar contexts tend to have similar meanings.</p>
+<p>Mathematically, LSA applies SVD to the term-document matrix:</p>
+<div class="math notranslate nohighlight">
+\[X = U\Sigma V^T\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(X\)</span> is the term-document matrix</p></li>
+<li><p><span class="math notranslate nohighlight">\(U\)</span> and <span class="math notranslate nohighlight">\(V\)</span> are orthogonal matrices</p></li>
+<li><p><span class="math notranslate nohighlight">\(\Sigma\)</span> is a diagonal matrix of singular values</p></li>
+</ul>
+<p>By keeping only the <span class="math notranslate nohighlight">\(k\)</span> largest singular values, we obtain a low-rank approximation that captures the most important semantic relationships. This reduces noise and reveals the latent semantic structure of the documents.</p>
+</section>
+</section>
+<section id="models-used-in-semantic-search">
+<h1>4. Models Used in Semantic Search<a class="headerlink" href="#models-used-in-semantic-search" title="Link to this heading">#</a></h1>
+<p>Semantic search leverages various models to understand and process text data. These models range from traditional statistical approaches to advanced neural network architectures. Understanding these models is crucial for grasping how semantic search systems work and how they’ve evolved over time.</p>
+<section id="tf-idf-model">
+<h2>4.1 TF-IDF Model<a class="headerlink" href="#tf-idf-model" title="Link to this heading">#</a></h2>
+<p>While not a deep learning technique, TF-IDF (Term Frequency-Inverse Document Frequency) is still relevant in many semantic search applications and forms a good starting point for understanding more complex models.</p>
+<section id="how-tf-idf-works-in-semantic-search">
+<h3>How TF-IDF Works in Semantic Search:<a class="headerlink" href="#how-tf-idf-works-in-semantic-search" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Document Representation</strong>: Each document is represented as a vector where each element corresponds to a term in the vocabulary. The value of each element is the TF-IDF score of that term in the document.</p></li>
+<li><p><strong>Query Processing</strong>: The user’s query is also converted into a TF-IDF vector.</p></li>
+<li><p><strong>Similarity Calculation</strong>: The similarity between the query vector and document vectors is calculated, often using cosine similarity.</p></li>
+<li><p><strong>Ranking</strong>: Documents are ranked based on their similarity to the query.</p></li>
+</ol>
+</section>
+<section id="advantages-of-tf-idf-in-semantic-search">
+<h3>Advantages of TF-IDF in Semantic Search:<a class="headerlink" href="#advantages-of-tf-idf-in-semantic-search" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Simple and computationally efficient</p></li>
+<li><p>Provides a good baseline for many information retrieval tasks</p></li>
+<li><p>Can be combined with more advanced techniques for improved performance</p></li>
+</ul>
+</section>
+<section id="limitations">
+<h3>Limitations:<a class="headerlink" href="#limitations" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Doesn’t capture word order or context</p></li>
+<li><p>Cannot understand synonyms or related concepts that don’t share exact terms</p></li>
+</ul>
+</section>
+</section>
+<section id="word2vec">
+<h2>4.2 Word2Vec<a class="headerlink" href="#word2vec" title="Link to this heading">#</a></h2>
+<p>Word2Vec is a groundbreaking model that learns vector representations of words (word embeddings) from large corpora of text.</p>
+<section id="how-word2vec-works-in-semantic-search">
+<h3>How Word2Vec Works in Semantic Search:<a class="headerlink" href="#how-word2vec-works-in-semantic-search" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Training</strong>: Word2Vec is trained on a large corpus of text to learn word embeddings.</p></li>
+<li><p><strong>Document Representation</strong>: Documents are represented by combining the embeddings of their constituent words (e.g., by averaging).</p></li>
+<li><p><strong>Query Processing</strong>: The query is similarly converted into a vector by combining word embeddings.</p></li>
+<li><p><strong>Similarity Calculation</strong>: As with TF-IDF, similarity between query and document vectors is calculated.</p></li>
+</ol>
+</section>
+<section id="advantages-in-semantic-search">
+<h3>Advantages in Semantic Search:<a class="headerlink" href="#advantages-in-semantic-search" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Captures semantic relationships between words</p></li>
+<li><p>Can handle synonyms and related concepts</p></li>
+<li><p>Enables more nuanced similarity calculations</p></li>
+</ul>
+</section>
+<section id="id1">
+<h3>Limitations:<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Static embeddings don’t account for context-dependent word meanings</p></li>
+<li><p>Limited by the quality and diversity of the training corpus</p></li>
+</ul>
+</section>
+</section>
+<section id="bert-bidirectional-encoder-representations-from-transformers">
+<h2>4.3 BERT (Bidirectional Encoder Representations from Transformers)<a class="headerlink" href="#bert-bidirectional-encoder-representations-from-transformers" title="Link to this heading">#</a></h2>
+<p>BERT, introduced by Google in 2018, represents a significant leap forward in natural language processing and has had a profound impact on semantic search.</p>
+<section id="how-bert-works-in-semantic-search">
+<h3>How BERT Works in Semantic Search:<a class="headerlink" href="#how-bert-works-in-semantic-search" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Pre-training</strong>: BERT is pre-trained on a large corpus of text using two main tasks:</p>
+<ul class="simple">
+<li><p>Masked Language Modeling (MLM): Predicting masked words in a sentence.</p></li>
+<li><p>Next Sentence Prediction (NSP): Predicting if one sentence follows another.</p></li>
+</ul>
+</li>
+<li><p><strong>Fine-tuning</strong>: The pre-trained BERT model is then fine-tuned on specific tasks, including semantic search.</p></li>
+<li><p><strong>Contextualized Embeddings</strong>: BERT generates contextualized embeddings for words and sentences, meaning the same word can have different representations depending on its context.</p></li>
+<li><p><strong>Document and Query Representation</strong>: Both documents and queries are passed through BERT to generate their respective embeddings.</p></li>
+<li><p><strong>Similarity Calculation</strong>: As with previous models, similarity between query and document embeddings is calculated to rank results.</p></li>
+</ol>
+</section>
+<section id="id2">
+<h3>Mathematical Formulation:<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p>For an input sequence <span class="math notranslate nohighlight">\(X = [x_1, ..., x_n]\)</span>, BERT produces contextualized representations <span class="math notranslate nohighlight">\(H = [h_1, ..., h_n]\)</span> where each <span class="math notranslate nohighlight">\(h_i \in \mathbb{R}^d\)</span> is a <span class="math notranslate nohighlight">\(d\)</span>-dimensional vector.</p>
+<p>The core of BERT is the self-attention mechanism:</p>
+<div class="math notranslate nohighlight">
+\[Attention(Q, K, V) = softmax(\frac{QK^T}{\sqrt{d_k}})V\]</div>
+<p>where <span class="math notranslate nohighlight">\(Q\)</span>, <span class="math notranslate nohighlight">\(K\)</span>, and <span class="math notranslate nohighlight">\(V\)</span> are query, key, and value matrices derived from the input embeddings.</p>
+</section>
+<section id="id3">
+<h3>Advantages in Semantic Search:<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Captures complex, context-dependent meanings of words and phrases</p></li>
+<li><p>Can handle long-range dependencies in text</p></li>
+<li><p>Achieves state-of-the-art performance on many NLP tasks, including semantic search</p></li>
+</ul>
+</section>
+<section id="id4">
+<h3>Limitations:<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Computationally intensive, which can be challenging for real-time applications</p></li>
+<li><p>Requires significant amounts of data and computational resources for training</p></li>
+</ul>
+</section>
+</section>
+<section id="transformer-based-models-in-semantic-search">
+<h2>4.4 Transformer-based Models in Semantic Search<a class="headerlink" href="#transformer-based-models-in-semantic-search" title="Link to this heading">#</a></h2>
+<p>The success of BERT has led to the development of numerous other transformer-based models, each with its own strengths and applications in semantic search.</p>
+<section id="encoder-only-models">
+<h3>4.4.1 Encoder-Only Models<a class="headerlink" href="#encoder-only-models" title="Link to this heading">#</a></h3>
+<p>Examples: BERT, RoBERTa, ALBERT</p>
+<p>These models focus on understanding and representing input text. They are particularly effective for tasks that require deep comprehension of text, such as document classification or relevance ranking in semantic search.</p>
+</section>
+<section id="decoder-only-models">
+<h3>4.4.2 Decoder-Only Models<a class="headerlink" href="#decoder-only-models" title="Link to this heading">#</a></h3>
+<p>Examples: GPT (Generative Pre-trained Transformer), GPT-2, GPT-3</p>
+<p>While primarily designed for text generation, decoder-only models can be adapted for semantic search tasks. They excel at tasks like query expansion or generating descriptive search snippets.</p>
+</section>
+<section id="encoder-decoder-models">
+<h3>4.4.3 Encoder-Decoder Models<a class="headerlink" href="#encoder-decoder-models" title="Link to this heading">#</a></h3>
+<p>Examples: T5 (Text-to-Text Transfer Transformer), BART</p>
+<p>These models can be used for various subtasks in semantic search, such as query reformulation or document summarization.</p>
+</section>
+</section>
+<section id="why-different-model-architectures-matter-in-semantic-search">
+<h2>4.5 Why Different Model Architectures Matter in Semantic Search<a class="headerlink" href="#why-different-model-architectures-matter-in-semantic-search" title="Link to this heading">#</a></h2>
+<p>Understanding the differences between encoder-only, decoder-only, and encoder-decoder models is crucial in semantic search because each architecture has its strengths and is suited to different aspects of the search process:</p>
+<ol class="arabic simple">
+<li><p><strong>Encoder-Only Models (e.g., BERT)</strong>:</p>
+<ul class="simple">
+<li><p>Best for: Understanding the meaning of queries and documents</p></li>
+<li><p>Use in semantic search: Generating high-quality embeddings for both queries and documents, which can be directly compared for relevance ranking</p></li>
+</ul>
+</li>
+<li><p><strong>Decoder-Only Models (e.g., GPT)</strong>:</p>
+<ul class="simple">
+<li><p>Best for: Generating human-like text</p></li>
+<li><p>Use in semantic search: Query expansion (generating alternative phrasings for a query), creating detailed search snippets, or even generating natural language explanations of search results</p></li>
+</ul>
+</li>
+<li><p><strong>Encoder-Decoder Models (e.g., T5)</strong>:</p>
+<ul class="simple">
+<li><p>Best for: Transforming input text into output text</p></li>
+<li><p>Use in semantic search: Query reformulation, translating queries between languages in cross-lingual search, or summarizing documents for more informative search results</p></li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+<section id="the-semantic-search-process">
+<h1>5. The Semantic Search Process<a class="headerlink" href="#the-semantic-search-process" title="Link to this heading">#</a></h1>
+<section id="indexing">
+<h2>5.1 Indexing<a class="headerlink" href="#indexing" title="Link to this heading">#</a></h2>
+<p>Indexing is the process of preparing documents for efficient search and retrieval.</p>
+<section id="steps-involved">
+<h3>Steps involved:<a class="headerlink" href="#steps-involved" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Text Preprocessing</strong>: Cleaning and normalizing text (e.g., lowercasing, removing punctuation, stemming/lemmatization).</p></li>
+<li><p><strong>Feature Extraction</strong>: Converting text into numerical features (e.g., TF-IDF vectors, word embeddings).</p></li>
+<li><p><strong>Dimensionality Reduction</strong>: Optionally reducing the dimensionality of feature vectors (e.g., using techniques like PCA or t-SNE).</p></li>
+<li><p><strong>Index Structure Creation</strong>: Organizing document vectors in a structure that allows for fast retrieval (e.g., inverted index, vector database).</p></li>
+</ol>
+</section>
+</section>
+<section id="query-processing">
+<h2>5.2 Query Processing<a class="headerlink" href="#query-processing" title="Link to this heading">#</a></h2>
+<p>When a user submits a query, it undergoes processing to match the format of the indexed documents.</p>
+<section id="id5">
+<h3>Steps involved:<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Query Preprocessing</strong>: Similar to document preprocessing (cleaning, normalization).</p></li>
+<li><p><strong>Query Expansion</strong>: Optionally expanding the query with synonyms or related terms.</p></li>
+<li><p><strong>Query Vectorization</strong>: Converting the query into a vector representation.</p></li>
+</ol>
+</section>
+</section>
+<section id="retrieval">
+<h2>5.3 Retrieval<a class="headerlink" href="#retrieval" title="Link to this heading">#</a></h2>
+<p>This stage involves finding documents that are potentially relevant to the query.</p>
+<section id="id6">
+<h3>Steps involved:<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Initial Retrieval</strong>: Using efficient algorithms to retrieve a subset of potentially relevant documents.</p></li>
+<li><p><strong>Similarity Calculation</strong>: Computing similarity scores between the query vector and document vectors.</p></li>
+</ol>
+</section>
+</section>
+<section id="ranking">
+<h2>5.4 Ranking<a class="headerlink" href="#ranking" title="Link to this heading">#</a></h2>
+<p>The retrieved documents are ordered based on their relevance to the query.</p>
+<section id="id7">
+<h3>Steps involved:<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Score Calculation</strong>: Computing a relevance score for each retrieved document.</p></li>
+<li><p><strong>Ranking Algorithm</strong>: Ordering documents based on their scores and potentially other factors.</p></li>
+</ol>
+</section>
+</section>
+<section id="result-presentation">
+<h2>5.5 Result Presentation<a class="headerlink" href="#result-presentation" title="Link to this heading">#</a></h2>
+<p>The final step involves presenting the ranked results to the user in a meaningful way.</p>
+<section id="id8">
+<h3>Steps involved:<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Snippet Generation</strong>: Creating concise summaries of each result.</p></li>
+<li><p><strong>Result Clustering</strong>: Optionally grouping similar results together.</p></li>
+<li><p><strong>Diversity Promotion</strong>: Ensuring a diverse set of results is presented.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">TfidfVectorizer</span>
+<span class="kn">from</span> <span class="nn">gensim.models</span> <span class="kn">import</span> <span class="n">Word2Vec</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">BertTokenizer</span><span class="p">,</span> <span class="n">BertModel</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="kn">import</span> <span class="n">cosine_similarity</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">pipeline</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">TfidfVectorizer</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">from</span> <span class="nn">gensim.models</span> <span class="kn">import</span> <span class="n">Word2Vec</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">BertTokenizer</span><span class="p">,</span> <span class="n">BertModel</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;sklearn&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">documents</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;The apple is a sweet fruit.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Apple designs and sells consumer electronics.&quot;</span><span class="p">,</span>
+     <span class="s2">&quot;Apple&#39;s latest software update includes new features.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;She picked an apple from the tree in her backyard.&quot;</span>
+<span class="p">]</span>
+<span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;Apple&#39;s stock price increased after the product launch.&quot;</span>
+
+<span class="k">def</span> <span class="nf">display_results</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">similarity_scores</span><span class="p">,</span> <span class="n">documents</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2"> Similarity Scores:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">similarity_scores</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Document </span><span class="si">{</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">documents</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">most_relevant_doc_index</span> <span class="o">=</span> <span class="n">similarity_scores</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Most Relevant Document: </span><span class="si">{</span><span class="n">documents</span><span class="p">[</span><span class="n">most_relevant_doc_index</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">tfidf_model</span><span class="p">(</span><span class="n">documents</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+    <span class="n">vectorizer</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">()</span>
+    <span class="n">tfidf_matrix</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+    <span class="n">query_vec</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">query</span><span class="p">])</span>
+    <span class="n">similarity_scores</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">query_vec</span><span class="p">,</span> <span class="n">tfidf_matrix</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">display_results</span><span class="p">(</span><span class="s2">&quot;TF-IDF&quot;</span><span class="p">,</span> <span class="n">similarity_scores</span><span class="p">,</span> <span class="n">documents</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">word2vec_model</span><span class="p">(</span><span class="n">documents</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+    <span class="n">tokenized_docs</span> <span class="o">=</span> <span class="p">[</span><span class="n">doc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">documents</span><span class="p">]</span>
+    <span class="n">w2v_model</span> <span class="o">=</span> <span class="n">Word2Vec</span><span class="p">(</span><span class="n">sentences</span><span class="o">=</span><span class="n">tokenized_docs</span><span class="p">,</span> <span class="n">vector_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">min_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">workers</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">average_vector</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+        <span class="n">vectors</span> <span class="o">=</span> <span class="p">[</span><span class="n">w2v_model</span><span class="o">.</span><span class="n">wv</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">if</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">w2v_model</span><span class="o">.</span><span class="n">wv</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">vectors</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">vectors</span><span class="p">)</span> <span class="k">if</span> <span class="n">vectors</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+
+    <span class="n">doc_embeddings</span> <span class="o">=</span> <span class="p">[</span><span class="n">average_vector</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">documents</span><span class="p">]</span>
+    <span class="n">query_embedding</span> <span class="o">=</span> <span class="n">average_vector</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+    <span class="n">similarity_scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">cosine_similarity</span><span class="p">([</span><span class="n">query_embedding</span><span class="p">],</span> <span class="p">[</span><span class="n">doc_emb</span><span class="p">])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">doc_emb</span> <span class="ow">in</span> <span class="n">doc_embeddings</span><span class="p">]</span>
+    <span class="n">display_results</span><span class="p">(</span><span class="s2">&quot;Word2Vec&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">similarity_scores</span><span class="p">),</span> <span class="n">documents</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">bert_model</span><span class="p">(</span><span class="n">documents</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+    <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">BertTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s1">&#39;bert-base-uncased&#39;</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">BertModel</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s1">&#39;bert-base-uncased&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">embed_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">512</span><span class="p">)</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">outputs</span><span class="o">.</span><span class="n">last_hidden_state</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        
+    <span class="n">doc_embeddings</span> <span class="o">=</span> <span class="p">[</span><span class="n">embed_text</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">documents</span><span class="p">]</span>
+    <span class="n">query_embedding</span> <span class="o">=</span> <span class="n">embed_text</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+    <span class="n">similarity_scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">cosine_similarity</span><span class="p">(</span><span class="n">query_embedding</span><span class="p">,</span> <span class="n">doc_emb</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">doc_emb</span> <span class="ow">in</span> <span class="n">doc_embeddings</span><span class="p">]</span>
+    <span class="n">display_results</span><span class="p">(</span><span class="s2">&quot;BERT&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">similarity_scores</span><span class="p">),</span> <span class="n">documents</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">transformer_model</span><span class="p">(</span><span class="n">documents</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+    <span class="n">transformer_model</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">(</span><span class="s1">&#39;feature-extraction&#39;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s1">&#39;sentence-transformers/all-MiniLM-L6-v2&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">embed_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">transformer_model</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">doc_embeddings</span> <span class="o">=</span> <span class="p">[</span><span class="n">embed_text</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">documents</span><span class="p">]</span>
+    <span class="n">query_embedding</span> <span class="o">=</span> <span class="n">embed_text</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+    <span class="n">similarity_scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">cosine_similarity</span><span class="p">(</span><span class="n">query_embedding</span><span class="p">,</span> <span class="n">doc_emb</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">doc_emb</span> <span class="ow">in</span> <span class="n">doc_embeddings</span><span class="p">]</span>
+    <span class="n">display_results</span><span class="p">(</span><span class="s2">&quot;Transformer&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">similarity_scores</span><span class="p">),</span> <span class="n">documents</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+<span class="n">tfidf_model</span><span class="p">(</span><span class="n">documents</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span>
+<span class="n">word2vec_model</span><span class="p">(</span><span class="n">documents</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span>
+<span class="n">bert_model</span><span class="p">(</span><span class="n">documents</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span>
+<span class="n">transformer_model</span><span class="p">(</span><span class="n">documents</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Apple&#39;s stock price increased after the product launch.
+
+TF-IDF Similarity Scores:
+Document 1: 0.4791 -&gt; The apple is a sweet fruit.
+Document 2: 0.1254 -&gt; Apple designs and sells consumer electronics.
+Document 3: 0.1150 -&gt; Apple&#39;s latest software update includes new features.
+Document 4: 0.3170 -&gt; She picked an apple from the tree in her backyard.
+
+Most Relevant Document: The apple is a sweet fruit.
+
+
+Word2Vec Similarity Scores:
+Document 1: 0.2895 -&gt; The apple is a sweet fruit.
+Document 2: -0.0648 -&gt; Apple designs and sells consumer electronics.
+Document 3: 0.3926 -&gt; Apple&#39;s latest software update includes new features.
+Document 4: 0.3193 -&gt; She picked an apple from the tree in her backyard.
+
+Most Relevant Document: Apple&#39;s latest software update includes new features.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\mypc\AppData\Local\Programs\Python\Python312\Lib\site-packages\transformers\tokenization_utils_base.py:1601: FutureWarning: `clean_up_tokenization_spaces` was not set. It will be set to `True` by default. This behavior will be depracted in transformers v4.45, and will be then set to `False` by default. For more details check this issue: https://github.com/huggingface/transformers/issues/31884
+  warnings.warn(
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "16a78bb17d754ec29a16cbfd66e4d3c9", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>BERT Similarity Scores:
+Document 1: 0.8255 -&gt; The apple is a sweet fruit.
+Document 2: 0.8286 -&gt; Apple designs and sells consumer electronics.
+Document 3: 0.8947 -&gt; Apple&#39;s latest software update includes new features.
+Document 4: 0.8363 -&gt; She picked an apple from the tree in her backyard.
+
+Most Relevant Document: Apple&#39;s latest software update includes new features.
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "2cb2ba6f945d4553a05b7759dac9bec4", "version_major": 2, "version_minor": 0}</script><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\mypc\AppData\Local\Programs\Python\Python312\Lib\site-packages\huggingface_hub\file_download.py:159: UserWarning: `huggingface_hub` cache-system uses symlinks by default to efficiently store duplicated files but your machine does not support them in C:\Users\mypc\.cache\huggingface\hub\models--sentence-transformers--all-MiniLM-L6-v2. Caching files will still work but in a degraded version that might require more space on your disk. This warning can be disabled by setting the `HF_HUB_DISABLE_SYMLINKS_WARNING` environment variable. For more details, see https://huggingface.co/docs/huggingface_hub/how-to-cache#limitations.
+To support symlinks on Windows, you either need to activate Developer Mode or to run Python as an administrator. In order to see activate developer mode, see this article: https://docs.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development
+  warnings.warn(message)
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "f4929a732aba4db6a66326ea7f328a1b", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "0f2a09903a9f43a887482aba157bed9b", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "44f071a309f14038a9a34aae1bdc703a", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "bb4a8b3bf20841c382c7f3f9f1bc8c21", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "58e040cb7bc4431cac4d6017b68cfe12", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Transformer Similarity Scores:
+Document 1: 0.3928 -&gt; The apple is a sweet fruit.
+Document 2: 0.4849 -&gt; Apple designs and sells consumer electronics.
+Document 3: 0.4689 -&gt; Apple&#39;s latest software update includes new features.
+Document 4: 0.2841 -&gt; She picked an apple from the tree in her backyard.
+
+Most Relevant Document: Apple designs and sells consumer electronics.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\mypc\AppData\Local\Programs\Python\Python312\Lib\site-packages\transformers\tokenization_utils_base.py:1601: FutureWarning: `clean_up_tokenization_spaces` was not set. It will be set to `True` by default. This behavior will be depracted in transformers v4.45, and will be then set to `False` by default. For more details check this issue: https://github.com/huggingface/transformers/issues/31884
+  warnings.warn(
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./week4"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="NDCG.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><strong>Understanding NDCG (Normalized Discounted Cumulative Gain)</strong></p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../week5/3.%20finetune_practice.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">1. What are the Training types of each encoder and decoder models?</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">1. Introduction to Semantic Search</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#semantic-search-vs-traditional-keyword-based-search">1.2 Semantic Search vs. Traditional Keyword-Based Search</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#traditional-keyword-based-search">Traditional Keyword-Based Search:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#semantic-search">Semantic Search:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example:</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#key-concepts-in-semantic-search">2. Key Concepts in Semantic Search</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vector-space-model-vsm">2.1 Vector Space Model (VSM)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#embeddings-and-representation-of-text">2.2 Embeddings and Representation of Text</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-principles-of-semantic-search">3. Mathematical Principles of Semantic Search</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vector-representations">3.1 Vector Representations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#similarity-metrics">3.2 Similarity Metrics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cosine-similarity">3.2.1 Cosine Similarity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#euclidean-distance">3.2.2 Euclidean Distance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dot-product">3.2.3 Dot Product</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#term-frequency-inverse-document-frequency-tf-idf">3.3 Term Frequency-Inverse Document Frequency (TF-IDF)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#word-embeddings">3.4 Word Embeddings</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-formulation">Mathematical Formulation:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#document-embeddings">3.5 Document Embeddings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#latent-semantic-analysis-lsa">3.6 Latent Semantic Analysis (LSA)</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#models-used-in-semantic-search">4. Models Used in Semantic Search</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tf-idf-model">4.1 TF-IDF Model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-tf-idf-works-in-semantic-search">How TF-IDF Works in Semantic Search:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advantages-of-tf-idf-in-semantic-search">Advantages of TF-IDF in Semantic Search:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#word2vec">4.2 Word2Vec</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-word2vec-works-in-semantic-search">How Word2Vec Works in Semantic Search:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advantages-in-semantic-search">Advantages in Semantic Search:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Limitations:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bert-bidirectional-encoder-representations-from-transformers">4.3 BERT (Bidirectional Encoder Representations from Transformers)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-bert-works-in-semantic-search">How BERT Works in Semantic Search:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Mathematical Formulation:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Advantages in Semantic Search:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Limitations:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer-based-models-in-semantic-search">4.4 Transformer-based Models in Semantic Search</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder-only-models">4.4.1 Encoder-Only Models</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder-only-models">4.4.2 Decoder-Only Models</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder-decoder-models">4.4.3 Encoder-Decoder Models</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-different-model-architectures-matter-in-semantic-search">4.5 Why Different Model Architectures Matter in Semantic Search</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#the-semantic-search-process">5. The Semantic Search Process</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#indexing">5.1 Indexing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#steps-involved">Steps involved:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#query-processing">5.2 Query Processing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Steps involved:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#retrieval">5.3 Retrieval</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Steps involved:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ranking">5.4 Ranking</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Steps involved:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#result-presentation">5.5 Result Presentation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">Steps involved:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The Jupyter Book Community
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

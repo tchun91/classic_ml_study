@@ -1,0 +1,2673 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>What is Naive Bayes Classifier? &#8212; My sample book</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'week1/1.NaiveBayes';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="K-Nearest Neighbor(KNN) Algorithm" href="2.KNN.html" />
+    <link rel="prev" title="Welcome to your Jupyter Book" href="../intro.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="My sample book - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="My sample book - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Welcome to your Jupyter Book
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Week 1</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">What is Naive Bayes Classifier?</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="2.KNN.html">K-Nearest Neighbor(KNN) Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Linear_Regression.html"><strong>Linear Regression</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Logistic_Regression.html">Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Regularization.html">L1 and L2 Regularization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Week 2</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../week2/1.DecisionTree.html">What is Decision Tree?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week2/2.PCA.html">What is Principal Component Analysis?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week2/3.Hierarchical%20Clustering.html">What is Hierarchical Clustering?</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../week2/Gradient%20Boosting.html"><strong>Gradient Boosting Overview</strong></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../week2/Kmeans.html">K-means Clustering</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Week 3</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../week3/1.svm.html">What is Support Vector Machine Algorithm?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week3/CatBoost.html">CatBoost: Concept and Mathematical Implementation</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../week3/Random_Forest.html">Random forest</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Week 4</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../week4/1.collaborative_filtering.html">What is Collaborative Filtering?</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="../week4/Market_Basket_Analysis.html">Market Basket Analysis (MBA)</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="../week4/NDCG.html"><strong>Understanding NDCG (Normalized Discounted Cumulative Gain)</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../week4/Semantic%20Search.html">1. Introduction to Semantic Search</a></li>
+
+
+
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Week 5</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../week5/3.%20finetune_practice.html">1. What are the Training types of each encoder and decoder models?</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../week5/TF-IDF%2C%20BoW%2C%20Faiss.html">TF-IDF</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="../week5/Transformer%2C_LoRA.html">Set Up Hugging Face Space Environment</a></li>
+
+
+
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fweek1/1.NaiveBayes.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/week1/1.NaiveBayes.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>What is Naive Bayes Classifier?</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">What is Naive Bayes Classifier?</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#naive-bayes-classifier">1. Naive Bayes classifier</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reference-link-https-www-geeksforgeeks-org-naive-bayes-classifiers">Reference Link : https://www.geeksforgeeks.org/naive-bayes-classifiers/</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-process">2. Mathematical process</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#we-can-check-their-distribution-by-boxplot-and-histogram-of-each-class-to-see-if-they-are-normally-distributed">We can check their distribution by boxplot and histogram of each class to see if they are normally distributed.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#likelihood-p-x-y">Likelihood P(x|y) <br/></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evidence-p-x">Evidence P(x) <br/></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#posterior-p-y-x">Posterior P(y|x) <br/></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practice">Practice :</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-if-our-dataset-is-binary-case">What if our dataset is binary case?</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#math-in-binary-dataset">Math in binary dataset.</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#likelihood">Likelihood <br/></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evidence">Evidence <br/></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#posterior">Posterior <br/></a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="what-is-naive-bayes-classifier">
+<h1>What is Naive Bayes Classifier?<a class="headerlink" href="#what-is-naive-bayes-classifier" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p>Naive Bayes Classifier is an algorythm based on Bayes’ theorem. The term naive assumes that the features are conditionally independent.</p></li>
+<li><p>Bayes’ theorem is <span class="math notranslate nohighlight">\( P(A|B) = \frac{P(A \cap B)}{P(B)} =  \frac{P(B|A) * P(A)}{P(B)} \)</span> where P(A|B) is conditional probability - probability of A after B happens.</p></li>
+<li><p>Each feature is equally important due to multiplication of each feature in likelihood.</p></li>
+</ul>
+<section id="naive-bayes-classifier">
+<h2>1. Naive Bayes classifier<a class="headerlink" href="#naive-bayes-classifier" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>The basic foundation is from this equation : <br></p></li>
+</ol>
+<ul class="simple">
+<li><p>Naive Bayes uses <span class="math notranslate nohighlight">\( P(A|B) -&gt; Posterior = \frac{likelihood * prior}{evidence} \)</span>
+<br></p></li>
+<li><p>Posterior is our target.
+<br></p></li>
+<li><p>Likelihood is P(B|A).
+<br></p></li>
+<li><p>Evidence(marginal) is P(B).
+<br></p></li>
+</ul>
+<section id="reference-link-https-www-geeksforgeeks-org-naive-bayes-classifiers">
+<h3>Reference Link : <a class="reference external" href="https://www.geeksforgeeks.org/naive-bayes-classifiers/">https://www.geeksforgeeks.org/naive-bayes-classifiers/</a><a class="headerlink" href="#reference-link-https-www-geeksforgeeks-org-naive-bayes-classifiers" title="Link to this heading">#</a></h3>
+</section>
+</section>
+<section id="mathematical-process">
+<h2>2. Mathematical process<a class="headerlink" href="#mathematical-process" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Classification: <br></p></li>
+</ol>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\( P(y \mid x_{i}) = \frac{P(x_{i} \mid y) * P(y)}{P(x_{i})} \)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\( P(y \mid x_{1}, ... , x_{n}) = \frac{
+P(x_{1} \mid y) * P(x_{2} \mid y) * ... * P(x_{n} \mid y) * P(y)
+}
+{
+P(x_{1})P(x_{2})...P(x_{n})
+} \)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\( = 
+\frac{
+P(y) \prod_{1}^{n} P(x_i \mid y)
+}
+{
+\prod_{1}^{n} P(x_{i})
+}
+\)</span></p></li>
+<li><p>Because the denominator is given in the dataset P(x), we can treat this as constant.</p></li>
+<li><p><span class="math notranslate nohighlight">\( y = argmax_{y} P(y) \prod_{1}^{n} P(x_i \mid y) \)</span></p>
+<ol class="arabic simple" start="3">
+<li><p><span class="math notranslate nohighlight">\( P(x_{i}\mid y) = \frac{1}{\sqrt{2\pi \sigma_y^{2}}} \exp \left(-\frac{(x_{i} -\mu_{y})^2}{2\sigma_y^{2}} \right) \)</span></p></li>
+</ol>
+</li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">pip</span> install ucimlrepo
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: ucimlrepo in /Users/tchun/opt/anaconda3/envs/carparts/lib/python3.9/site-packages (0.0.7)
+Requirement already satisfied: pandas&gt;=1.0.0 in /Users/tchun/opt/anaconda3/envs/carparts/lib/python3.9/site-packages (from ucimlrepo) (2.2.2)
+Requirement already satisfied: certifi&gt;=2020.12.5 in /Users/tchun/opt/anaconda3/envs/carparts/lib/python3.9/site-packages (from ucimlrepo) (2021.10.8)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: numpy&gt;=1.22.4 in /Users/tchun/opt/anaconda3/envs/carparts/lib/python3.9/site-packages (from pandas&gt;=1.0.0-&gt;ucimlrepo) (1.26.4)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: python-dateutil&gt;=2.8.2 in /Users/tchun/opt/anaconda3/envs/carparts/lib/python3.9/site-packages (from pandas&gt;=1.0.0-&gt;ucimlrepo) (2.8.2)
+Requirement already satisfied: pytz&gt;=2020.1 in /Users/tchun/opt/anaconda3/envs/carparts/lib/python3.9/site-packages (from pandas&gt;=1.0.0-&gt;ucimlrepo) (2023.3.post1)
+Requirement already satisfied: tzdata&gt;=2022.7 in /Users/tchun/opt/anaconda3/envs/carparts/lib/python3.9/site-packages (from pandas&gt;=1.0.0-&gt;ucimlrepo) (2024.1)
+Requirement already satisfied: six&gt;=1.5 in /Users/tchun/opt/anaconda3/envs/carparts/lib/python3.9/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas&gt;=1.0.0-&gt;ucimlrepo) (1.16.0)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Yellow">DEPRECATION: pyodbc 4.0.0-unsupported has a non-standard version number. pip 24.0 will enforce this behaviour change. A possible replacement is to upgrade to a newer version of pyodbc or contact the author to suggest that they release a version with a conforming version number. Discussion can be found at https://github.com/pypa/pip/issues/12063</span>
+
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ucimlrepo</span> <span class="kn">import</span> <span class="n">fetch_ucirepo</span> 
+  
+<span class="c1"># fetch dataset </span>
+<span class="n">iris</span> <span class="o">=</span> <span class="n">fetch_ucirepo</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">53</span><span class="p">)[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;original&#39;</span><span class="p">]</span>
+  
+<span class="c1"># data (as pandas dataframes) </span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">iris</span><span class="p">[[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">iris</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]]]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">iris</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">iris</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sepal length</th>
+      <th>sepal width</th>
+      <th>petal length</th>
+      <th>petal width</th>
+      <th>class</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>5.1</td>
+      <td>3.5</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>Iris-setosa</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4.9</td>
+      <td>3.0</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>Iris-setosa</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4.7</td>
+      <td>3.2</td>
+      <td>1.3</td>
+      <td>0.2</td>
+      <td>Iris-setosa</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4.6</td>
+      <td>3.1</td>
+      <td>1.5</td>
+      <td>0.2</td>
+      <td>Iris-setosa</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5.0</td>
+      <td>3.6</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>Iris-setosa</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">iris</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">)[</span><span class="s1">&#39;class&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>class
+Iris-setosa        50
+Iris-versicolor    50
+Iris-virginica     50
+Name: class, dtype: int64
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="we-can-check-their-distribution-by-boxplot-and-histogram-of-each-class-to-see-if-they-are-normally-distributed">
+<h2>We can check their distribution by boxplot and histogram of each class to see if they are normally distributed.<a class="headerlink" href="#we-can-check-their-distribution-by-boxplot-and-histogram-of-each-class-to-see-if-they-are-normally-distributed" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">iris</span><span class="o">.</span><span class="n">boxplot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot: &gt;
+</pre></div>
+</div>
+<img alt="../_images/0ae9e58047aaa65d4959b8abcfe6374000b4be76dd90cf7213c7b9233b435da5.png" src="../_images/0ae9e58047aaa65d4959b8abcfe6374000b4be76dd90cf7213c7b9233b435da5.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import matplotlib.pyplot as plt</span>
+<span class="c1"># iris.plot.hist(column=&#39;sepal length&#39;,by=&#39;class&#39;,bins=5)</span>
+<span class="c1"># plt.show()</span>
+
+<span class="c1"># iris.plot.hist(column=&#39;sepal width&#39;,by=&#39;class&#39;,bins=5)</span>
+<span class="c1"># plt.show()</span>
+
+<span class="c1"># iris.plot.hist(column=&#39;petal length&#39;,by=&#39;class&#39;,bins=5)</span>
+<span class="c1"># plt.show()</span>
+
+<span class="c1"># iris.plot.hist(column=&#39;petal width&#39;,by=&#39;class&#39;,bins=5)</span>
+<span class="c1"># plt.show()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="c1">#petal - 꽃잎 corolla of a flower</span>
+<span class="c1">#sepal - 꽃받침 thing that encloses the petals and typically green and leaflike</span>
+
+<span class="c1"># calculate the correlation matrix on the numeric columns</span>
+<span class="n">corr</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
+
+<span class="c1"># plot the heatmap</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">corr</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot: &gt;
+</pre></div>
+</div>
+<img alt="../_images/39f9f44ea0cb9493c1b37f65c788de2660fa4bf80f250715ad111ef23bb6aa2c.png" src="../_images/39f9f44ea0cb9493c1b37f65c788de2660fa4bf80f250715ad111ef23bb6aa2c.png" />
+</div>
+</div>
+<p>Let’s bring the equation for continous variables
+<span class="math notranslate nohighlight">\( P(x_{i}\mid y) = \frac{1}{\sqrt{2\pi \sigma_y^{2}}} \exp \left(-\frac{(x_{i} -\mu_{y})^2}{2\sigma_y^{2}} \right) \)</span></p>
+<p>We can break the formula by each feature in our model. <br>
+<span class="math notranslate nohighlight">\( P(x_{i}\mid y) = argmax_{j=1}^{m}(P(x_{Iris-setosa}\mid y_j),P(x_{Iris-versicolor}\mid y_j),P(x_{Iris-virginica}\mid y_j)) \)</span></p>
+<ul class="simple">
+<li><p>The above formula seems a bit tricky without breaking apart into details. We can look at the detail for one class at a feature level.</p></li>
+</ul>
+</section>
+<section id="likelihood-p-x-y">
+<h2>Likelihood P(x|y) <br><a class="headerlink" href="#likelihood-p-x-y" title="Link to this heading">#</a></h2>
+<p>We can simply get likelihood of being first class using the below equation. <br>
+<span class="math notranslate nohighlight">\( P(x_i|y=class1) = \prod_{i=1}^{n} \frac{1}{\sqrt{2\pi \sigma_y^{2}}} \exp \left(-\frac{(x_{i} -\mu_{y})^2}{2\sigma_y^{2}} \right) \)</span> <br>
+<span class="math notranslate nohighlight">\( = \prod_{i=1}^{n} P(x_{i}|y_{1}) \)</span> <br>
+Here, the likelihood of each feature means where this data point falls under the normal distribution with the given mean and std from the dataset.<br>
+One of our assumption is our features are conditionally independent given the target class.<br>
+Therefore, we are allowed to multiply each likelihood of feature to get the probablity of being that data point with all features for a class. <br>
+So our final likelihood will be following: <br>
+<span class="math notranslate nohighlight">\( argmax_{j=1}^{m} (\prod_{i=1}^{n} P(x_i|y=class_j)) \)</span></p>
+</section>
+<section id="evidence-p-x">
+<h2>Evidence P(x) <br><a class="headerlink" href="#evidence-p-x" title="Link to this heading">#</a></h2>
+<p><span class="math notranslate nohighlight">\( P(x) = \sum_{j=1}^{m} P(x|y=j)P(y=j) \)</span> <br>
+This is because we cannot get P(x) by taking the proportion to the entire dataset. Proportion sounds it is relying on empirical estimate. However, you are not assuming anything under a certain distribution which can also lead a bais because, for continous variable, you may have something close to values in each feature, but you are relying on proportions and may not have any values that are matching. In this case, you P(x) will be very small and lead to a too rough estimate.</p>
+</section>
+<section id="posterior-p-y-x">
+<h2>Posterior P(y|x) <Br><a class="headerlink" href="#posterior-p-y-x" title="Link to this heading">#</a></h2>
+<p>This is our final probability for classification problem. <br>
+It can be derived using finally Likelihood and Evidence from the above. <br>
+<span class="math notranslate nohighlight">\( P(y|x) = \frac{P(x|y)*p(y)}{p(x)} \)</span></p>
+</section>
+<section id="practice">
+<h2>Practice :<a class="headerlink" href="#practice" title="Link to this heading">#</a></h2>
+<p>Let’s get to the details how we can calculate with our dataset.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="k">def</span> <span class="nf">get_p_given_y</span><span class="p">(</span><span class="n">x_i</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span><span class="n">mu_y</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span><span class="n">std_y</span><span class="p">:</span><span class="nb">float</span><span class="p">):</span>
+    <span class="n">p_x_y</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> 
+        <span class="o">*</span> 
+        <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+            <span class="o">-</span><span class="p">((</span><span class="n">x_i</span> <span class="o">-</span> <span class="n">mu_y</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">std_y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">p_x_y</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">iris</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;class&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span><span class="s1">&#39;std&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead tr th {
+        text-align: left;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th>class</th>
+      <th colspan="2" halign="left">sepal length</th>
+      <th colspan="2" halign="left">sepal width</th>
+      <th colspan="2" halign="left">petal length</th>
+      <th colspan="2" halign="left">petal width</th>
+    </tr>
+    <tr>
+      <th></th>
+      <th></th>
+      <th>mean</th>
+      <th>std</th>
+      <th>mean</th>
+      <th>std</th>
+      <th>mean</th>
+      <th>std</th>
+      <th>mean</th>
+      <th>std</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Iris-setosa</td>
+      <td>5.006</td>
+      <td>0.352490</td>
+      <td>3.418</td>
+      <td>0.381024</td>
+      <td>1.464</td>
+      <td>0.173511</td>
+      <td>0.244</td>
+      <td>0.107210</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Iris-versicolor</td>
+      <td>5.936</td>
+      <td>0.516171</td>
+      <td>2.770</td>
+      <td>0.313798</td>
+      <td>4.260</td>
+      <td>0.469911</td>
+      <td>1.326</td>
+      <td>0.197753</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Iris-virginica</td>
+      <td>6.588</td>
+      <td>0.635880</td>
+      <td>2.974</td>
+      <td>0.322497</td>
+      <td>5.552</td>
+      <td>0.551895</td>
+      <td>2.026</td>
+      <td>0.274650</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># example</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">get_p_given_y</span><span class="p">(</span><span class="n">x_i</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">mu_y</span><span class="o">=</span><span class="mf">5.006</span><span class="p">,</span><span class="n">std_y</span><span class="o">=</span><span class="mf">0.352490</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">get_p_given_y</span><span class="p">(</span><span class="n">x_i</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">mu_y</span><span class="o">=</span><span class="mf">3.418</span><span class="p">,</span><span class="n">std_y</span><span class="o">=</span><span class="mf">0.381024</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">get_p_given_y</span><span class="p">(</span><span class="n">x_i</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">mu_y</span><span class="o">=</span><span class="mf">1.464</span><span class="p">,</span><span class="n">std_y</span><span class="o">=</span><span class="mf">0.173511</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.2250464741615915
+4.064118694051635e-05
+1.4767578447297364e-91
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">)[</span><span class="s1">&#39;class&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">/</span><span class="n">iris</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>class
+Iris-setosa        0.333333
+Iris-versicolor    0.333333
+Iris-virginica     0.333333
+Name: class, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dict_mean_std</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;class&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span><span class="s1">&#39;std&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s1">&#39;list&#39;</span><span class="p">)</span>
+<span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;sepal length&#39;</span><span class="p">,</span><span class="s1">&#39;mean&#39;</span><span class="p">)]</span> <span class="c1"># setosa,versicolor, virginica respectively</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[5.006, 5.936, 6.587999999999999]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_1</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+<span class="n">x_1</span> <span class="c1"># sl, sw, pl, pw</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[5.1, 3.5, 1.4, 0.2]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># How to calculate likelihood</span>
+<span class="n">p_x1_sl_setosa</span> <span class="o">=</span> <span class="n">get_p_given_y</span><span class="p">(</span><span class="n">x_i</span> <span class="o">=</span> <span class="n">x_1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mu_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;sepal length&#39;</span><span class="p">,</span><span class="s1">&#39;mean&#39;</span><span class="p">)][</span><span class="mi">0</span><span class="p">],</span> <span class="n">std_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;sepal length&#39;</span><span class="p">,</span><span class="s1">&#39;std&#39;</span><span class="p">)][</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">p_x1_sw_setosa</span> <span class="o">=</span> <span class="n">get_p_given_y</span><span class="p">(</span><span class="n">x_i</span> <span class="o">=</span> <span class="n">x_1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">mu_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;sepal width&#39;</span><span class="p">,</span><span class="s1">&#39;mean&#39;</span><span class="p">)][</span><span class="mi">0</span><span class="p">],</span> <span class="n">std_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;sepal width&#39;</span><span class="p">,</span><span class="s1">&#39;std&#39;</span><span class="p">)][</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">p_x1_pl_setosa</span> <span class="o">=</span> <span class="n">get_p_given_y</span><span class="p">(</span><span class="n">x_i</span> <span class="o">=</span> <span class="n">x_1</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">mu_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;petal length&#39;</span><span class="p">,</span><span class="s1">&#39;mean&#39;</span><span class="p">)][</span><span class="mi">0</span><span class="p">],</span> <span class="n">std_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;petal length&#39;</span><span class="p">,</span><span class="s1">&#39;std&#39;</span><span class="p">)][</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">p_x1_pw_setosa</span> <span class="o">=</span> <span class="n">get_p_given_y</span><span class="p">(</span><span class="n">x_i</span> <span class="o">=</span> <span class="n">x_1</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">mu_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;petal width&#39;</span><span class="p">,</span><span class="s1">&#39;mean&#39;</span><span class="p">)][</span><span class="mi">0</span><span class="p">],</span> <span class="n">std_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;petal width&#39;</span><span class="p">,</span><span class="s1">&#39;std&#39;</span><span class="p">)][</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">p_x1_sl_setosa</span><span class="p">,</span><span class="n">p_x1_sw_setosa</span><span class="p">,</span><span class="n">p_x1_pl_setosa</span><span class="p">,</span><span class="n">p_x1_pw_setosa</span><span class="p">)</span>
+<span class="n">p_x1_setosa</span> <span class="o">=</span> <span class="n">p_x1_sl_setosa</span> <span class="o">*</span> <span class="n">p_x1_sw_setosa</span> <span class="o">*</span> <span class="n">p_x1_pl_setosa</span> <span class="o">*</span> <span class="n">p_x1_pw_setosa</span>
+
+<span class="n">p_x1_setosa</span>
+
+<span class="c1">#Repeat this for other classes</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.21721641631618133 0.21992669318778105 0.21027701331611803 0.20689947615081528
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.002078364805229067
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_1</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+<span class="n">x_1</span> <span class="c1"># sl, sw, pl, pw</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[5.1, 3.5, 1.4, 0.2]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p_x1_likelihood_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="c1"># How to calculate likelihood</span>
+    <span class="n">p_x1_sl_i</span> <span class="o">=</span> <span class="n">get_p_given_y</span><span class="p">(</span><span class="n">x_i</span> <span class="o">=</span> <span class="n">x_1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mu_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;sepal length&#39;</span><span class="p">,</span><span class="s1">&#39;mean&#39;</span><span class="p">)][</span><span class="n">i</span><span class="p">],</span> <span class="n">std_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;sepal length&#39;</span><span class="p">,</span><span class="s1">&#39;std&#39;</span><span class="p">)][</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">p_x1_sw_i</span> <span class="o">=</span> <span class="n">get_p_given_y</span><span class="p">(</span><span class="n">x_i</span> <span class="o">=</span> <span class="n">x_1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">mu_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;sepal width&#39;</span><span class="p">,</span><span class="s1">&#39;mean&#39;</span><span class="p">)][</span><span class="n">i</span><span class="p">],</span> <span class="n">std_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;sepal width&#39;</span><span class="p">,</span><span class="s1">&#39;std&#39;</span><span class="p">)][</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">p_x1_pl_i</span> <span class="o">=</span> <span class="n">get_p_given_y</span><span class="p">(</span><span class="n">x_i</span> <span class="o">=</span> <span class="n">x_1</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">mu_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;petal length&#39;</span><span class="p">,</span><span class="s1">&#39;mean&#39;</span><span class="p">)][</span><span class="n">i</span><span class="p">],</span> <span class="n">std_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;petal length&#39;</span><span class="p">,</span><span class="s1">&#39;std&#39;</span><span class="p">)][</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">p_x1_pw_i</span> <span class="o">=</span> <span class="n">get_p_given_y</span><span class="p">(</span><span class="n">x_i</span> <span class="o">=</span> <span class="n">x_1</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">mu_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;petal width&#39;</span><span class="p">,</span><span class="s1">&#39;mean&#39;</span><span class="p">)][</span><span class="n">i</span><span class="p">],</span> <span class="n">std_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;petal width&#39;</span><span class="p">,</span><span class="s1">&#39;std&#39;</span><span class="p">)][</span><span class="n">i</span><span class="p">])</span>
+    
+
+    <span class="n">p_x1_i</span> <span class="o">=</span> <span class="n">p_x1_sl_i</span> <span class="o">*</span> <span class="n">p_x1_sw_i</span> <span class="o">*</span> <span class="n">p_x1_pl_i</span> <span class="o">*</span> <span class="n">p_x1_pw_i</span>
+    
+    <span class="n">p_x1_likelihood_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_x1_i</span><span class="p">)</span>
+<span class="n">p_x1_likelihood_list</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.002078364805229067, 3.8076215296648023e-20, 5.676987908056648e-27]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Evidence from likelihood</span>
+<span class="n">x1_evidence</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">i</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">p_x1_likelihood_list</span><span class="p">])</span>
+<span class="n">x1_evidence</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.000692788268409689
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Posterior</span>
+<span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="n">x1_evidence</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">p_x1_likelihood_list</span><span class="p">]</span><span class="c1"># setosa,versicolor, virginica respectively</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1.0, 1.8320275247564854e-17, 2.7314684572090602e-24]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Full automated function</span>
+<span class="k">def</span> <span class="nf">n_b_fn</span><span class="p">(</span><span class="n">datainput</span><span class="p">):</span>
+    <span class="n">p_x1_likelihood_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="c1"># How to calculate likelihood</span>
+        <span class="n">p_x1_sl_i</span> <span class="o">=</span> <span class="n">get_p_given_y</span><span class="p">(</span><span class="n">x_i</span> <span class="o">=</span> <span class="n">datainput</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mu_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;sepal length&#39;</span><span class="p">,</span><span class="s1">&#39;mean&#39;</span><span class="p">)][</span><span class="n">i</span><span class="p">],</span> <span class="n">std_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;sepal length&#39;</span><span class="p">,</span><span class="s1">&#39;std&#39;</span><span class="p">)][</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">p_x1_sw_i</span> <span class="o">=</span> <span class="n">get_p_given_y</span><span class="p">(</span><span class="n">x_i</span> <span class="o">=</span> <span class="n">datainput</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">mu_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;sepal width&#39;</span><span class="p">,</span><span class="s1">&#39;mean&#39;</span><span class="p">)][</span><span class="n">i</span><span class="p">],</span> <span class="n">std_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;sepal width&#39;</span><span class="p">,</span><span class="s1">&#39;std&#39;</span><span class="p">)][</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">p_x1_pl_i</span> <span class="o">=</span> <span class="n">get_p_given_y</span><span class="p">(</span><span class="n">x_i</span> <span class="o">=</span> <span class="n">datainput</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">mu_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;petal length&#39;</span><span class="p">,</span><span class="s1">&#39;mean&#39;</span><span class="p">)][</span><span class="n">i</span><span class="p">],</span> <span class="n">std_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;petal length&#39;</span><span class="p">,</span><span class="s1">&#39;std&#39;</span><span class="p">)][</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">p_x1_pw_i</span> <span class="o">=</span> <span class="n">get_p_given_y</span><span class="p">(</span><span class="n">x_i</span> <span class="o">=</span> <span class="n">datainput</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">mu_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;petal width&#39;</span><span class="p">,</span><span class="s1">&#39;mean&#39;</span><span class="p">)][</span><span class="n">i</span><span class="p">],</span> <span class="n">std_y</span> <span class="o">=</span> <span class="n">dict_mean_std</span><span class="p">[(</span><span class="s1">&#39;petal width&#39;</span><span class="p">,</span><span class="s1">&#39;std&#39;</span><span class="p">)][</span><span class="n">i</span><span class="p">])</span>
+        
+    
+        <span class="n">p_x1_i</span> <span class="o">=</span> <span class="n">p_x1_sl_i</span> <span class="o">*</span> <span class="n">p_x1_sw_i</span> <span class="o">*</span> <span class="n">p_x1_pl_i</span> <span class="o">*</span> <span class="n">p_x1_pw_i</span>
+        
+        <span class="n">p_x1_likelihood_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_x1_i</span><span class="p">)</span>
+    <span class="n">x1_evidence</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">i</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">p_x1_likelihood_list</span><span class="p">])</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="n">x1_evidence</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">p_x1_likelihood_list</span><span class="p">]</span><span class="c1"># setosa,versicolor, virginica respectively</span>
+<span class="n">n_b_fn</span><span class="p">(</span><span class="n">x_1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1.0, 1.8320275247564854e-17, 2.7314684572090602e-24]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.naive_bayes</span> <span class="kn">import</span> <span class="n">GaussianNB</span>
+<span class="n">gnb</span> <span class="o">=</span> <span class="n">GaussianNB</span><span class="p">()</span>
+<span class="n">gnb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>#sk-container-id-1 {
+  /* Definition of color scheme common for light and dark mode */
+  --sklearn-color-text: black;
+  --sklearn-color-line: gray;
+  /* Definition of color scheme for unfitted estimators */
+  --sklearn-color-unfitted-level-0: #fff5e6;
+  --sklearn-color-unfitted-level-1: #f6e4d2;
+  --sklearn-color-unfitted-level-2: #ffe0b3;
+  --sklearn-color-unfitted-level-3: chocolate;
+  /* Definition of color scheme for fitted estimators */
+  --sklearn-color-fitted-level-0: #f0f8ff;
+  --sklearn-color-fitted-level-1: #d4ebff;
+  --sklearn-color-fitted-level-2: #b3dbfd;
+  --sklearn-color-fitted-level-3: cornflowerblue;
+
+  /* Specific color for light theme */
+  --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, white)));
+  --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-icon: #696969;
+
+  @media (prefers-color-scheme: dark) {
+    /* Redefinition of color scheme for dark theme */
+    --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, #111)));
+    --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-icon: #878787;
+  }
+}
+
+#sk-container-id-1 {
+  color: var(--sklearn-color-text);
+}
+
+#sk-container-id-1 pre {
+  padding: 0;
+}
+
+#sk-container-id-1 input.sk-hidden--visually {
+  border: 0;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+#sk-container-id-1 div.sk-dashed-wrapped {
+  border: 1px dashed var(--sklearn-color-line);
+  margin: 0 0.4em 0.5em 0.4em;
+  box-sizing: border-box;
+  padding-bottom: 0.4em;
+  background-color: var(--sklearn-color-background);
+}
+
+#sk-container-id-1 div.sk-container {
+  /* jupyter's `normalize.less` sets `[hidden] { display: none; }`
+     but bootstrap.min.css set `[hidden] { display: none !important; }`
+     so we also need the `!important` here to be able to override the
+     default hidden behavior on the sphinx rendered scikit-learn.org.
+     See: https://github.com/scikit-learn/scikit-learn/issues/21755 */
+  display: inline-block !important;
+  position: relative;
+}
+
+#sk-container-id-1 div.sk-text-repr-fallback {
+  display: none;
+}
+
+div.sk-parallel-item,
+div.sk-serial,
+div.sk-item {
+  /* draw centered vertical line to link estimators */
+  background-image: linear-gradient(var(--sklearn-color-text-on-default-background), var(--sklearn-color-text-on-default-background));
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* Parallel-specific style estimator block */
+
+#sk-container-id-1 div.sk-parallel-item::after {
+  content: "";
+  width: 100%;
+  border-bottom: 2px solid var(--sklearn-color-text-on-default-background);
+  flex-grow: 1;
+}
+
+#sk-container-id-1 div.sk-parallel {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background-color: var(--sklearn-color-background);
+  position: relative;
+}
+
+#sk-container-id-1 div.sk-parallel-item {
+  display: flex;
+  flex-direction: column;
+}
+
+#sk-container-id-1 div.sk-parallel-item:first-child::after {
+  align-self: flex-end;
+  width: 50%;
+}
+
+#sk-container-id-1 div.sk-parallel-item:last-child::after {
+  align-self: flex-start;
+  width: 50%;
+}
+
+#sk-container-id-1 div.sk-parallel-item:only-child::after {
+  width: 0;
+}
+
+/* Serial-specific style estimator block */
+
+#sk-container-id-1 div.sk-serial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--sklearn-color-background);
+  padding-right: 1em;
+  padding-left: 1em;
+}
+
+
+/* Toggleable style: style used for estimator/Pipeline/ColumnTransformer box that is
+clickable and can be expanded/collapsed.
+- Pipeline and ColumnTransformer use this feature and define the default style
+- Estimators will overwrite some part of the style using the `sk-estimator` class
+*/
+
+/* Pipeline and ColumnTransformer style (default) */
+
+#sk-container-id-1 div.sk-toggleable {
+  /* Default theme specific background. It is overwritten whether we have a
+  specific estimator or a Pipeline/ColumnTransformer */
+  background-color: var(--sklearn-color-background);
+}
+
+/* Toggleable label */
+#sk-container-id-1 label.sk-toggleable__label {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+  padding: 0.5em;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#sk-container-id-1 label.sk-toggleable__label-arrow:before {
+  /* Arrow on the left of the label */
+  content: "▸";
+  float: left;
+  margin-right: 0.25em;
+  color: var(--sklearn-color-icon);
+}
+
+#sk-container-id-1 label.sk-toggleable__label-arrow:hover:before {
+  color: var(--sklearn-color-text);
+}
+
+/* Toggleable content - dropdown */
+
+#sk-container-id-1 div.sk-toggleable__content {
+  max-height: 0;
+  max-width: 0;
+  overflow: hidden;
+  text-align: left;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-1 div.sk-toggleable__content.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-1 div.sk-toggleable__content pre {
+  margin: 0.2em;
+  border-radius: 0.25em;
+  color: var(--sklearn-color-text);
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-1 div.sk-toggleable__content.fitted pre {
+  /* unfitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-1 input.sk-toggleable__control:checked~div.sk-toggleable__content {
+  /* Expand drop-down */
+  max-height: 200px;
+  max-width: 100%;
+  overflow: auto;
+}
+
+#sk-container-id-1 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {
+  content: "▾";
+}
+
+/* Pipeline/ColumnTransformer-specific style */
+
+#sk-container-id-1 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-1 div.sk-label.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator-specific style */
+
+/* Colorize estimator box */
+#sk-container-id-1 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-1 div.sk-estimator.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+#sk-container-id-1 div.sk-label label.sk-toggleable__label,
+#sk-container-id-1 div.sk-label label {
+  /* The background is the default theme color */
+  color: var(--sklearn-color-text-on-default-background);
+}
+
+/* On hover, darken the color of the background */
+#sk-container-id-1 div.sk-label:hover label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+/* Label box, darken color on hover, fitted */
+#sk-container-id-1 div.sk-label.fitted:hover label.sk-toggleable__label.fitted {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator label */
+
+#sk-container-id-1 div.sk-label label {
+  font-family: monospace;
+  font-weight: bold;
+  display: inline-block;
+  line-height: 1.2em;
+}
+
+#sk-container-id-1 div.sk-label-container {
+  text-align: center;
+}
+
+/* Estimator-specific */
+#sk-container-id-1 div.sk-estimator {
+  font-family: monospace;
+  border: 1px dotted var(--sklearn-color-border-box);
+  border-radius: 0.25em;
+  box-sizing: border-box;
+  margin-bottom: 0.5em;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-1 div.sk-estimator.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+/* on hover */
+#sk-container-id-1 div.sk-estimator:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-1 div.sk-estimator.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Specification for estimator info (e.g. "i" and "?") */
+
+/* Common style for "i" and "?" */
+
+.sk-estimator-doc-link,
+a:link.sk-estimator-doc-link,
+a:visited.sk-estimator-doc-link {
+  float: right;
+  font-size: smaller;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1em;
+  height: 1em;
+  width: 1em;
+  text-decoration: none !important;
+  margin-left: 1ex;
+  /* unfitted */
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+  color: var(--sklearn-color-unfitted-level-1);
+}
+
+.sk-estimator-doc-link.fitted,
+a:link.sk-estimator-doc-link.fitted,
+a:visited.sk-estimator-doc-link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+div.sk-estimator:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover,
+div.sk-label-container:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+div.sk-estimator.fitted:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover,
+div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+/* Span, style for the box shown on hovering the info icon */
+.sk-estimator-doc-link span {
+  display: none;
+  z-index: 9999;
+  position: relative;
+  font-weight: normal;
+  right: .2ex;
+  padding: .5ex;
+  margin: .5ex;
+  width: min-content;
+  min-width: 20ex;
+  max-width: 50ex;
+  color: var(--sklearn-color-text);
+  box-shadow: 2pt 2pt 4pt #999;
+  /* unfitted */
+  background: var(--sklearn-color-unfitted-level-0);
+  border: .5pt solid var(--sklearn-color-unfitted-level-3);
+}
+
+.sk-estimator-doc-link.fitted span {
+  /* fitted */
+  background: var(--sklearn-color-fitted-level-0);
+  border: var(--sklearn-color-fitted-level-3);
+}
+
+.sk-estimator-doc-link:hover span {
+  display: block;
+}
+
+/* "?"-specific style due to the `<a>` HTML tag */
+
+#sk-container-id-1 a.estimator_doc_link {
+  float: right;
+  font-size: 1rem;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1rem;
+  height: 1rem;
+  width: 1rem;
+  text-decoration: none;
+  /* unfitted */
+  color: var(--sklearn-color-unfitted-level-1);
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+}
+
+#sk-container-id-1 a.estimator_doc_link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+#sk-container-id-1 a.estimator_doc_link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+#sk-container-id-1 a.estimator_doc_link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+}
+</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GaussianNB()</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" checked><label for="sk-estimator-id-1" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GaussianNB<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.4/modules/generated/sklearn.naive_bayes.GaussianNB.html">?<span>Documentation for GaussianNB</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GaussianNB()</pre></div> </div></div></div></div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_1</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[5.1, 3.5, 1.4, 0.2]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">gnb</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x_1</span><span class="p">])))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">gnb</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x_1</span><span class="p">])))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[1.00000000e+00 1.38496103e-18 7.25489025e-26]]
+[&#39;Iris-setosa&#39;]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/tchun/opt/anaconda3/envs/carparts/lib/python3.9/site-packages/sklearn/base.py:493: UserWarning: X does not have valid feature names, but GaussianNB was fitted with feature names
+  warnings.warn(
+/Users/tchun/opt/anaconda3/envs/carparts/lib/python3.9/site-packages/sklearn/base.py:493: UserWarning: X does not have valid feature names, but GaussianNB was fitted with feature names
+  warnings.warn(
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># n_b_fn()</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">1</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">n_b_fn</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[3.7681410221024236e-107, 0.6621266580020119, 0.33787334199798813]
+[1.0098743931588455e-99, 0.8888921455990317, 0.11110785440096829]
+[4.533497482429522e-121, 0.29254966140087074, 0.7074503385991293]
+[9.150166405567126e-70, 0.999921734341772, 7.826565822792809e-05]
+[1.947061201138275e-105, 0.9025979632776301, 0.09740203672236995]
+[1.3945051343924268e-89, 0.9979398117860291, 0.002060188213970815]
+[6.373775633111082e-113, 0.48369394268885596, 0.516306057311144]
+[9.824858718334024e-35, 0.9999993557700907, 6.442299092970441e-07]
+[4.587746236197247e-97, 0.9786333619169608, 0.021366638083039107]
+[5.315669054635867e-69, 0.999778714932676, 0.0002212850673240241]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gnb</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">50</span><span class="p">:</span><span class="mi">60</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[1.87127931e-108, 8.04037666e-001, 1.95962334e-001],
+       [6.18854779e-101, 9.45169639e-001, 5.48303606e-002],
+       [1.52821825e-122, 4.56151317e-001, 5.43848683e-001],
+       [2.14997261e-070, 9.99968751e-001, 3.12488556e-005],
+       [9.04938222e-107, 9.52441811e-001, 4.75581888e-002],
+       [1.29272979e-090, 9.99119627e-001, 8.80372565e-004],
+       [2.72490532e-114, 6.58952285e-001, 3.41047715e-001],
+       [1.19734767e-034, 9.99999767e-001, 2.33206910e-007],
+       [3.02545627e-098, 9.90316309e-001, 9.68369084e-003],
+       [1.29477666e-069, 9.99909746e-001, 9.02536083e-005]])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">result_fn_list</span><span class="o">=</span><span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="n">result_fn_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">n_b_fn</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">())))</span>
+<span class="n">result_fn_list</span> 
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 1,
+ 1,
+ 2,
+ 1,
+ 1,
+ 1,
+ 2,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 2,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 2,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 2,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 1,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 1,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 1,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 1,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2,
+ 2]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;fn&#39;</span><span class="p">:</span><span class="n">result_fn_list</span><span class="p">,</span><span class="s1">&#39;sk&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">gnb</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)})</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">fn</span><span class="o">!=</span><span class="n">df</span><span class="o">.</span><span class="n">sk</span><span class="p">),:]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>fn</th>
+      <th>sk</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>56</th>
+      <td>2</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>83</th>
+      <td>2</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([&#39;Iris-setosa&#39;, &#39;Iris-versicolor&#39;, &#39;Iris-virginica&#39;], dtype=object)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">classification_report</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">classification_report</span><span class="p">(</span><span class="n">y</span><span class="p">,</span>
+                      <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="s1">&#39;Iris-setosa&#39;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">&#39;Iris-versicolor&#39;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;Iris-virginica&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">result_fn_list</span><span class="p">])</span>
+                     <span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                 precision    recall  f1-score   support
+
+    Iris-setosa       1.00      1.00      1.00        50
+Iris-versicolor       0.94      0.90      0.92        50
+ Iris-virginica       0.90      0.94      0.92        50
+
+       accuracy                           0.95       150
+      macro avg       0.95      0.95      0.95       150
+   weighted avg       0.95      0.95      0.95       150
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">gnb</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[[</span><span class="mi">56</span><span class="p">,</span><span class="mi">83</span><span class="p">],:]))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">56</span><span class="p">,</span><span class="mi">84</span><span class="p">,</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">56</span><span class="p">,</span><span class="mi">83</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">n_b_fn</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[2.72490532e-114 6.58952285e-001 3.41047715e-001]
+ [2.61124821e-134 6.12159845e-001 3.87840155e-001]]
+[6.373775633111082e-113, 0.48369394268885596, 0.516306057311144]
+[1.4826900011043284e-132, 0.4345203925241147, 0.5654796074758853]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="what-if-our-dataset-is-binary-case">
+<h2>What if our dataset is binary case?<a class="headerlink" href="#what-if-our-dataset-is-binary-case" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X2</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span>
+    <span class="n">sl</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;sepal length&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mf">5.843333</span><span class="p">,</span>
+    <span class="n">sw</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;sepal width&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mf">3.054000</span><span class="p">,</span>
+    <span class="n">pl</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;petal length&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mf">3.758667</span><span class="p">,</span>
+    <span class="n">pw</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;petal width&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mf">1.198667</span>
+<span class="p">)[[</span><span class="s1">&#39;sl&#39;</span><span class="p">,</span><span class="s1">&#39;sw&#39;</span><span class="p">,</span><span class="s1">&#39;pl&#39;</span><span class="p">,</span><span class="s1">&#39;pw&#39;</span><span class="p">]]</span>
+<span class="n">iris2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">X2</span><span class="p">,</span><span class="n">y</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">iris2</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="c1">#Ture = large, False = small</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sl</th>
+      <th>sw</th>
+      <th>pl</th>
+      <th>pw</th>
+      <th>class</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>False</td>
+      <td>True</td>
+      <td>False</td>
+      <td>False</td>
+      <td>Iris-setosa</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>Iris-setosa</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">iris2</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sl</th>
+      <th>sw</th>
+      <th>pl</th>
+      <th>pw</th>
+    </tr>
+    <tr>
+      <th>class</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Iris-setosa</th>
+      <td>0</td>
+      <td>42</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>Iris-versicolor</th>
+      <td>26</td>
+      <td>8</td>
+      <td>43</td>
+      <td>40</td>
+    </tr>
+    <tr>
+      <th>Iris-virginica</th>
+      <td>44</td>
+      <td>17</td>
+      <td>50</td>
+      <td>50</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">iris2</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>sl    70
+sw    67
+pl    93
+pw    90
+dtype: int64
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="math-in-binary-dataset">
+<h1>Math in binary dataset.<a class="headerlink" href="#math-in-binary-dataset" title="Link to this heading">#</a></h1>
+<section id="likelihood">
+<h2>Likelihood <br><a class="headerlink" href="#likelihood" title="Link to this heading">#</a></h2>
+<p>For binary case, we want to calculate <span class="math notranslate nohighlight">\( P(x|y) \)</span> same as continuous variables. <br>
+Again we want to calculate each of class’ likelihood. First class would be: <br>
+<span class="math notranslate nohighlight">\( P(x|y=class1) = \prod_{i=1}^{n} P(x_i|y=class1) \)</span> <br>
+Here, <span class="math notranslate nohighlight">\( P(x_i|y=class1) \)</span> will be same as above by multiplying by all probabilities of each feature being true. <br>
+Because this is binary, we can simply get their proportion of being true in each feature in each class. <br>
+If we have a dataset indicate one feature is being true, we apply the observed proportion and if it’s false, we use 1-proportion. <br>
+Then, finally multiply all the probabilities of all features to get the specific class being. <br>
+<span class="math notranslate nohighlight">\( \theta_{x=i}^{y=j} =  \frac{N_{i,j}}{N_{y_j}} =  \frac{\text{number of times feature } X_i \text{ is 1 in class } y}{\text{total number of samples in class } y} \)</span>
+<br>
+P(x|y) = <span class="math notranslate nohighlight">\(\prod P(x_i|y_j)\)</span> where <span class="math notranslate nohighlight">\(\theta_{i,j}\)</span> when <span class="math notranslate nohighlight">\(x_i = 1\)</span>, <span class="math notranslate nohighlight">\( 1 - \theta_{i,j} \text{ when } x_i = 0\)</span></p>
+</section>
+<section id="evidence">
+<h2>Evidence <br><a class="headerlink" href="#evidence" title="Link to this heading">#</a></h2>
+<p>Will be the same.</p>
+</section>
+<section id="posterior">
+<h2>Posterior <br><a class="headerlink" href="#posterior" title="Link to this heading">#</a></h2>
+<p>will be the same.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p_c1</span><span class="p">,</span><span class="n">p_c2</span><span class="p">,</span><span class="n">p_c3</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span>
+<span class="c1"># 70, 67,93,90</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">            	sl	sw	pl	pw</span>
+<span class="sd">Iris-setosa 	0	42	0	0</span>
+<span class="sd">Iris-versicolor	26	8	43	40</span>
+<span class="sd">Iris-virginica	44	17	50	50</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="n">t_f1_y1</span> <span class="o">=</span> <span class="mi">0</span><span class="o">/</span><span class="mi">50</span>
+<span class="n">t_f2_y1</span> <span class="o">=</span> <span class="mi">42</span><span class="o">/</span><span class="mi">50</span>
+<span class="n">t_f3_y1</span> <span class="o">=</span> <span class="mi">0</span><span class="o">/</span><span class="mi">50</span>
+<span class="n">t_f4_y1</span> <span class="o">=</span> <span class="mi">0</span><span class="o">/</span><span class="mi">50</span>
+
+<span class="n">t_f1_y2</span> <span class="o">=</span> <span class="mi">26</span> <span class="o">/</span> <span class="mi">50</span>
+<span class="n">t_f2_y2</span> <span class="o">=</span> <span class="mi">8</span> <span class="o">/</span> <span class="mi">50</span>
+<span class="n">t_f3_y2</span> <span class="o">=</span> <span class="mi">43</span> <span class="o">/</span> <span class="mi">50</span>
+<span class="n">t_f4_y2</span> <span class="o">=</span> <span class="mi">40</span> <span class="o">/</span> <span class="mi">50</span>
+
+<span class="n">t_f1_y3</span> <span class="o">=</span> <span class="mi">44</span> <span class="o">/</span> <span class="mi">50</span>
+<span class="n">t_f2_y3</span> <span class="o">=</span> <span class="mi">17</span> <span class="o">/</span> <span class="mi">50</span>
+<span class="n">t_f3_y3</span> <span class="o">=</span> <span class="mi">50</span> <span class="o">/</span> <span class="mi">50</span>
+<span class="n">t_f4_y3</span> <span class="o">=</span> <span class="mi">50</span> <span class="o">/</span> <span class="mi">50</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">binary_likelihood</span><span class="p">(</span><span class="n">datainput</span><span class="p">):</span>
+    <span class="n">p_f1_y1</span> <span class="o">=</span> <span class="n">t_f1_y1</span> <span class="k">if</span> <span class="n">datainput</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span> <span class="k">else</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">t_f1_y1</span><span class="p">)</span>
+    <span class="n">p_f1_y2</span> <span class="o">=</span> <span class="n">t_f1_y2</span> <span class="k">if</span> <span class="n">datainput</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span> <span class="k">else</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">t_f1_y2</span><span class="p">)</span>
+    <span class="n">p_f1_y3</span> <span class="o">=</span> <span class="n">t_f1_y3</span> <span class="k">if</span> <span class="n">datainput</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span> <span class="k">else</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">t_f1_y3</span><span class="p">)</span>
+
+    <span class="n">p_f2_y1</span> <span class="o">=</span> <span class="n">t_f2_y1</span> <span class="k">if</span> <span class="n">datainput</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span> <span class="k">else</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">t_f2_y1</span><span class="p">)</span>
+    <span class="n">p_f2_y2</span> <span class="o">=</span> <span class="n">t_f2_y2</span> <span class="k">if</span> <span class="n">datainput</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span> <span class="k">else</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">t_f2_y2</span><span class="p">)</span>
+    <span class="n">p_f2_y3</span> <span class="o">=</span> <span class="n">t_f2_y3</span> <span class="k">if</span> <span class="n">datainput</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span> <span class="k">else</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">t_f2_y3</span><span class="p">)</span>
+    
+    <span class="n">p_f3_y1</span> <span class="o">=</span> <span class="n">t_f3_y1</span> <span class="k">if</span> <span class="n">datainput</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span> <span class="k">else</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">t_f3_y1</span><span class="p">)</span>
+    <span class="n">p_f3_y2</span> <span class="o">=</span> <span class="n">t_f3_y2</span> <span class="k">if</span> <span class="n">datainput</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span> <span class="k">else</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">t_f3_y2</span><span class="p">)</span>
+    <span class="n">p_f3_y3</span> <span class="o">=</span> <span class="n">t_f3_y3</span> <span class="k">if</span> <span class="n">datainput</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span> <span class="k">else</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">t_f3_y3</span><span class="p">)</span>
+    
+    <span class="n">p_f4_y1</span> <span class="o">=</span> <span class="n">t_f4_y1</span> <span class="k">if</span> <span class="n">datainput</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span> <span class="k">else</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">t_f4_y1</span><span class="p">)</span>
+    <span class="n">p_f4_y2</span> <span class="o">=</span> <span class="n">t_f4_y2</span> <span class="k">if</span> <span class="n">datainput</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span> <span class="k">else</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">t_f4_y2</span><span class="p">)</span>
+    <span class="n">p_f4_y3</span> <span class="o">=</span> <span class="n">t_f4_y3</span> <span class="k">if</span> <span class="n">datainput</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span> <span class="k">else</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">t_f4_y3</span><span class="p">)</span>
+
+    <span class="n">p_f_y1</span> <span class="o">=</span> <span class="n">p_f1_y1</span> <span class="o">*</span> <span class="n">p_f2_y1</span> <span class="o">*</span> <span class="n">p_f3_y1</span> <span class="o">*</span> <span class="n">p_f4_y1</span>
+    <span class="n">p_f_y2</span> <span class="o">=</span> <span class="n">p_f1_y2</span> <span class="o">*</span> <span class="n">p_f2_y2</span> <span class="o">*</span> <span class="n">p_f3_y2</span> <span class="o">*</span> <span class="n">p_f4_y2</span>
+    <span class="n">p_f_y3</span> <span class="o">=</span> <span class="n">p_f1_y3</span> <span class="o">*</span> <span class="n">p_f2_y3</span> <span class="o">*</span> <span class="n">p_f3_y3</span> <span class="o">*</span> <span class="n">p_f4_y3</span>
+    <span class="c1"># print(p_f1_y1 , p_f2_y1 , p_f3_y1 , p_f4_y1)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">p_f_y1</span><span class="p">,</span><span class="n">p_f_y2</span><span class="p">,</span><span class="n">p_f_y3</span><span class="p">]</span>
+
+<span class="n">binary_likelihood_list</span> <span class="o">=</span> <span class="n">binary_likelihood</span><span class="p">(</span><span class="n">X2</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X2</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[False, False, False, False]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Evidence from likelihood</span>
+<span class="n">binary_evidence</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">i</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">binary_likelihood_list</span><span class="p">])</span>
+<span class="n">binary_evidence</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.057096533333333345
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="n">binary_evidence</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">binary_likelihood_list</span><span class="p">]</span> 
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.9340905694216111, 0.06590943057838884, 0.0]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">binary_nb</span><span class="p">(</span><span class="n">datainput</span><span class="p">):</span>
+    <span class="n">binary_likelihood_list</span> <span class="o">=</span> <span class="n">binary_likelihood</span><span class="p">(</span><span class="n">datainput</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="n">binary_evidence</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">binary_likelihood_list</span><span class="p">]</span> 
+    
+<span class="n">binary_nb</span><span class="p">(</span><span class="n">X2</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.9340905694216111, 0.06590943057838884, 0.0]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.naive_bayes</span> <span class="kn">import</span> <span class="n">BernoulliNB</span>
+<span class="n">bnb</span> <span class="o">=</span> <span class="n">BernoulliNB</span><span class="p">()</span>
+<span class="n">bnb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X2</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>#sk-container-id-2 {
+  /* Definition of color scheme common for light and dark mode */
+  --sklearn-color-text: black;
+  --sklearn-color-line: gray;
+  /* Definition of color scheme for unfitted estimators */
+  --sklearn-color-unfitted-level-0: #fff5e6;
+  --sklearn-color-unfitted-level-1: #f6e4d2;
+  --sklearn-color-unfitted-level-2: #ffe0b3;
+  --sklearn-color-unfitted-level-3: chocolate;
+  /* Definition of color scheme for fitted estimators */
+  --sklearn-color-fitted-level-0: #f0f8ff;
+  --sklearn-color-fitted-level-1: #d4ebff;
+  --sklearn-color-fitted-level-2: #b3dbfd;
+  --sklearn-color-fitted-level-3: cornflowerblue;
+
+  /* Specific color for light theme */
+  --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, white)));
+  --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-icon: #696969;
+
+  @media (prefers-color-scheme: dark) {
+    /* Redefinition of color scheme for dark theme */
+    --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, #111)));
+    --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-icon: #878787;
+  }
+}
+
+#sk-container-id-2 {
+  color: var(--sklearn-color-text);
+}
+
+#sk-container-id-2 pre {
+  padding: 0;
+}
+
+#sk-container-id-2 input.sk-hidden--visually {
+  border: 0;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+#sk-container-id-2 div.sk-dashed-wrapped {
+  border: 1px dashed var(--sklearn-color-line);
+  margin: 0 0.4em 0.5em 0.4em;
+  box-sizing: border-box;
+  padding-bottom: 0.4em;
+  background-color: var(--sklearn-color-background);
+}
+
+#sk-container-id-2 div.sk-container {
+  /* jupyter's `normalize.less` sets `[hidden] { display: none; }`
+     but bootstrap.min.css set `[hidden] { display: none !important; }`
+     so we also need the `!important` here to be able to override the
+     default hidden behavior on the sphinx rendered scikit-learn.org.
+     See: https://github.com/scikit-learn/scikit-learn/issues/21755 */
+  display: inline-block !important;
+  position: relative;
+}
+
+#sk-container-id-2 div.sk-text-repr-fallback {
+  display: none;
+}
+
+div.sk-parallel-item,
+div.sk-serial,
+div.sk-item {
+  /* draw centered vertical line to link estimators */
+  background-image: linear-gradient(var(--sklearn-color-text-on-default-background), var(--sklearn-color-text-on-default-background));
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* Parallel-specific style estimator block */
+
+#sk-container-id-2 div.sk-parallel-item::after {
+  content: "";
+  width: 100%;
+  border-bottom: 2px solid var(--sklearn-color-text-on-default-background);
+  flex-grow: 1;
+}
+
+#sk-container-id-2 div.sk-parallel {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background-color: var(--sklearn-color-background);
+  position: relative;
+}
+
+#sk-container-id-2 div.sk-parallel-item {
+  display: flex;
+  flex-direction: column;
+}
+
+#sk-container-id-2 div.sk-parallel-item:first-child::after {
+  align-self: flex-end;
+  width: 50%;
+}
+
+#sk-container-id-2 div.sk-parallel-item:last-child::after {
+  align-self: flex-start;
+  width: 50%;
+}
+
+#sk-container-id-2 div.sk-parallel-item:only-child::after {
+  width: 0;
+}
+
+/* Serial-specific style estimator block */
+
+#sk-container-id-2 div.sk-serial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--sklearn-color-background);
+  padding-right: 1em;
+  padding-left: 1em;
+}
+
+
+/* Toggleable style: style used for estimator/Pipeline/ColumnTransformer box that is
+clickable and can be expanded/collapsed.
+- Pipeline and ColumnTransformer use this feature and define the default style
+- Estimators will overwrite some part of the style using the `sk-estimator` class
+*/
+
+/* Pipeline and ColumnTransformer style (default) */
+
+#sk-container-id-2 div.sk-toggleable {
+  /* Default theme specific background. It is overwritten whether we have a
+  specific estimator or a Pipeline/ColumnTransformer */
+  background-color: var(--sklearn-color-background);
+}
+
+/* Toggleable label */
+#sk-container-id-2 label.sk-toggleable__label {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+  padding: 0.5em;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#sk-container-id-2 label.sk-toggleable__label-arrow:before {
+  /* Arrow on the left of the label */
+  content: "▸";
+  float: left;
+  margin-right: 0.25em;
+  color: var(--sklearn-color-icon);
+}
+
+#sk-container-id-2 label.sk-toggleable__label-arrow:hover:before {
+  color: var(--sklearn-color-text);
+}
+
+/* Toggleable content - dropdown */
+
+#sk-container-id-2 div.sk-toggleable__content {
+  max-height: 0;
+  max-width: 0;
+  overflow: hidden;
+  text-align: left;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-2 div.sk-toggleable__content.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-2 div.sk-toggleable__content pre {
+  margin: 0.2em;
+  border-radius: 0.25em;
+  color: var(--sklearn-color-text);
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-2 div.sk-toggleable__content.fitted pre {
+  /* unfitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-2 input.sk-toggleable__control:checked~div.sk-toggleable__content {
+  /* Expand drop-down */
+  max-height: 200px;
+  max-width: 100%;
+  overflow: auto;
+}
+
+#sk-container-id-2 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {
+  content: "▾";
+}
+
+/* Pipeline/ColumnTransformer-specific style */
+
+#sk-container-id-2 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-2 div.sk-label.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator-specific style */
+
+/* Colorize estimator box */
+#sk-container-id-2 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-2 div.sk-estimator.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+#sk-container-id-2 div.sk-label label.sk-toggleable__label,
+#sk-container-id-2 div.sk-label label {
+  /* The background is the default theme color */
+  color: var(--sklearn-color-text-on-default-background);
+}
+
+/* On hover, darken the color of the background */
+#sk-container-id-2 div.sk-label:hover label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+/* Label box, darken color on hover, fitted */
+#sk-container-id-2 div.sk-label.fitted:hover label.sk-toggleable__label.fitted {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator label */
+
+#sk-container-id-2 div.sk-label label {
+  font-family: monospace;
+  font-weight: bold;
+  display: inline-block;
+  line-height: 1.2em;
+}
+
+#sk-container-id-2 div.sk-label-container {
+  text-align: center;
+}
+
+/* Estimator-specific */
+#sk-container-id-2 div.sk-estimator {
+  font-family: monospace;
+  border: 1px dotted var(--sklearn-color-border-box);
+  border-radius: 0.25em;
+  box-sizing: border-box;
+  margin-bottom: 0.5em;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-2 div.sk-estimator.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+/* on hover */
+#sk-container-id-2 div.sk-estimator:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-2 div.sk-estimator.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Specification for estimator info (e.g. "i" and "?") */
+
+/* Common style for "i" and "?" */
+
+.sk-estimator-doc-link,
+a:link.sk-estimator-doc-link,
+a:visited.sk-estimator-doc-link {
+  float: right;
+  font-size: smaller;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1em;
+  height: 1em;
+  width: 1em;
+  text-decoration: none !important;
+  margin-left: 1ex;
+  /* unfitted */
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+  color: var(--sklearn-color-unfitted-level-1);
+}
+
+.sk-estimator-doc-link.fitted,
+a:link.sk-estimator-doc-link.fitted,
+a:visited.sk-estimator-doc-link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+div.sk-estimator:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover,
+div.sk-label-container:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+div.sk-estimator.fitted:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover,
+div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+/* Span, style for the box shown on hovering the info icon */
+.sk-estimator-doc-link span {
+  display: none;
+  z-index: 9999;
+  position: relative;
+  font-weight: normal;
+  right: .2ex;
+  padding: .5ex;
+  margin: .5ex;
+  width: min-content;
+  min-width: 20ex;
+  max-width: 50ex;
+  color: var(--sklearn-color-text);
+  box-shadow: 2pt 2pt 4pt #999;
+  /* unfitted */
+  background: var(--sklearn-color-unfitted-level-0);
+  border: .5pt solid var(--sklearn-color-unfitted-level-3);
+}
+
+.sk-estimator-doc-link.fitted span {
+  /* fitted */
+  background: var(--sklearn-color-fitted-level-0);
+  border: var(--sklearn-color-fitted-level-3);
+}
+
+.sk-estimator-doc-link:hover span {
+  display: block;
+}
+
+/* "?"-specific style due to the `<a>` HTML tag */
+
+#sk-container-id-2 a.estimator_doc_link {
+  float: right;
+  font-size: 1rem;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1rem;
+  height: 1rem;
+  width: 1rem;
+  text-decoration: none;
+  /* unfitted */
+  color: var(--sklearn-color-unfitted-level-1);
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+}
+
+#sk-container-id-2 a.estimator_doc_link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+#sk-container-id-2 a.estimator_doc_link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+#sk-container-id-2 a.estimator_doc_link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+}
+</style><div id="sk-container-id-2" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>BernoulliNB()</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox" checked><label for="sk-estimator-id-2" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;BernoulliNB<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.4/modules/generated/sklearn.naive_bayes.BernoulliNB.html">?<span>Documentation for BernoulliNB</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>BernoulliNB()</pre></div> </div></div></div></div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bnb</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X2</span><span class="o">.</span><span class="n">iloc</span><span class="p">[[</span><span class="mi">1</span><span class="p">]])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[9.26407837e-01, 7.34074806e-02, 1.84682668e-04]])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fn_result_list</span><span class="o">=</span><span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">150</span><span class="p">):</span>
+    <span class="n">fn_result_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">binary_nb</span><span class="p">(</span><span class="n">X2</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()))</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_binary_compare</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;pred&#39;</span><span class="p">:</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">fn_result_list</span><span class="p">),</span><span class="s1">&#39;pred_m&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">bnb</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X2</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)})</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">classification_report</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">classification_report</span><span class="p">(</span><span class="n">y</span><span class="p">,</span>
+                      <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="s1">&#39;Iris-setosa&#39;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">&#39;Iris-versicolor&#39;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;Iris-virginica&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">fn_result_list</span><span class="p">])</span>
+                     <span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                 precision    recall  f1-score   support
+
+    Iris-setosa       0.89      1.00      0.94        50
+Iris-versicolor       0.76      0.38      0.51        50
+ Iris-virginica       0.64      0.88      0.74        50
+
+       accuracy                           0.75       150
+      macro avg       0.76      0.75      0.73       150
+   weighted avg       0.76      0.75      0.73       150
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "carparts"
+        },
+        kernelOptions: {
+            name: "carparts",
+            path: "./week1"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'carparts'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Welcome to your Jupyter Book</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="2.KNN.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">K-Nearest Neighbor(KNN) Algorithm</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">What is Naive Bayes Classifier?</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#naive-bayes-classifier">1. Naive Bayes classifier</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reference-link-https-www-geeksforgeeks-org-naive-bayes-classifiers">Reference Link : https://www.geeksforgeeks.org/naive-bayes-classifiers/</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-process">2. Mathematical process</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#we-can-check-their-distribution-by-boxplot-and-histogram-of-each-class-to-see-if-they-are-normally-distributed">We can check their distribution by boxplot and histogram of each class to see if they are normally distributed.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#likelihood-p-x-y">Likelihood P(x|y) <br/></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evidence-p-x">Evidence P(x) <br/></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#posterior-p-y-x">Posterior P(y|x) <br/></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practice">Practice :</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-if-our-dataset-is-binary-case">What if our dataset is binary case?</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#math-in-binary-dataset">Math in binary dataset.</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#likelihood">Likelihood <br/></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evidence">Evidence <br/></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#posterior">Posterior <br/></a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The Jupyter Book Community
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,39 @@
+Traceback (most recent call last):
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/nbclient/client.py", line 1305, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/nbclient/client.py", line 705, in async_execute
+    await self.async_execute_cell(
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/nbclient/client.py", line 1058, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/nbclient/client.py", line 914, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+X2 = X.assign(
+    sl = X['sepal length']>5.843333,
+    sw = X['sepal width']>3.054000,
+    pl = X['petal length']>3.758667,
+    pw = X['petal width']>1.198667
+)[['sl','sw','pl','pw']]
+iris2 = pd.concat([X2,y],axis=1)
+------------------
+
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mNameError[0m                                 Traceback (most recent call last)
+[0;32m/var/folders/td/1zp1k2xj2m5dwylk8w2lttg80000gn/T/ipykernel_3294/27703058.py[0m in [0;36m<module>[0;34m[0m
+[1;32m      5[0m     [0mpw[0m [0;34m=[0m [0mX[0m[0;34m[[0m[0;34m'petal width'[0m[0;34m][0m[0;34m>[0m[0;36m1.198667[0m[0;34m[0m[0;34m[0m[0m
+[1;32m      6[0m )[['sl','sw','pl','pw']]
+[0;32m----> 7[0;31m [0miris2[0m [0;34m=[0m [0mpd[0m[0;34m.[0m[0mconcat[0m[0;34m([0m[0;34m[[0m[0mX2[0m[0;34m,[0m[0my[0m[0;34m][0m[0;34m,[0m[0maxis[0m[0;34m=[0m[0;36m1[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m
+[0;31mNameError[0m: name 'pd' is not defined
+
