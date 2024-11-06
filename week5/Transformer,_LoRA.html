@@ -30,13 +30,22 @@
   <link href="../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=f0c89327" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=d2032c04" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=f0c89327" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/theme.css?v=a243ae73" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
@@ -63,6 +72,21 @@
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'week5/Transformer,_LoRA';</script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/searchtools.js?v=63a53a7d"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../_static/language_data.js?v=d4673a71"></script>
+    <script src="../_static/copybutton_funcs.js?v=776a791e"></script>
+    <script src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../_static/scripts/bootstrap.js?v=7583a70d"></script>
+    <script src="../_static/scripts/fontawesome.js?v=9b125980"></script>
+    <script src="../_static/scripts/pydata-sphinx-theme.js?v=f62441ba"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="prev" title="TF-IDF" href="TF-IDF%2C%20BoW%2C%20Faiss.html" />
@@ -165,7 +189,7 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="../intro.html">
-                    Welcome to your Jupyter Book
+                    Classic Machine Learning Book
                 </a>
             </li>
         </ul>
@@ -446,56 +470,22 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: huggingface_hub in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (0.26.1)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: filelock in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from huggingface_hub) (3.16.1)
-Requirement already satisfied: fsspec&gt;=2023.5.0 in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from huggingface_hub) (2024.10.0)
-Requirement already satisfied: packaging&gt;=20.9 in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from huggingface_hub) (24.1)
-Requirement already satisfied: pyyaml&gt;=5.1 in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from huggingface_hub) (6.0.2)
-Requirement already satisfied: requests in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from huggingface_hub) (2.32.3)
-Requirement already satisfied: tqdm&gt;=4.42.1 in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from huggingface_hub) (4.66.5)
-Requirement already satisfied: typing-extensions&gt;=3.7.4.3 in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from huggingface_hub) (4.11.0)
-Requirement already satisfied: charset-normalizer&lt;4,&gt;=2 in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from requests-&gt;huggingface_hub) (3.3.2)
-Requirement already satisfied: idna&lt;4,&gt;=2.5 in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from requests-&gt;huggingface_hub) (3.7)
-Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from requests-&gt;huggingface_hub) (2.2.3)
-Requirement already satisfied: certifi&gt;=2017.4.17 in /Users/tchun/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages (from requests-&gt;huggingface_hub) (2024.8.30)
-</pre></div>
-</div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ValueError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">5</span>
-<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">get_ipython</span><span class="p">()</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;pip install huggingface_hub&#39;</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="kn">from</span> <span class="nn">huggingface_hub</span> <span class="kn">import</span> <span class="n">login</span>
-<span class="ne">----&gt; </span><span class="mi">5</span> <span class="n">login</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-
-<span class="nn">File ~/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/huggingface_hub/_login.py:119,</span> in <span class="ni">login</span><span class="nt">(token, add_to_git_credential, new_session, write_permission)</span>
-<span class="g g-Whitespace">    </span><span class="mi">112</span>     <span class="k">if</span> <span class="ow">not</span> <span class="n">add_to_git_credential</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">113</span>         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">114</span>             <span class="s2">&quot;The token has not been saved to the git credentials helper. Pass &quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">115</span>             <span class="s2">&quot;`add_to_git_credential=True` in this function directly or &quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">116</span>             <span class="s2">&quot;`--add-to-git-credential` if using via `huggingface-cli` if &quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">117</span>             <span class="s2">&quot;you want to set the git credential as well.&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">118</span>         <span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">119</span>     <span class="n">_login</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">add_to_git_credential</span><span class="o">=</span><span class="n">add_to_git_credential</span><span class="p">,</span> <span class="n">write_permission</span><span class="o">=</span><span class="n">write_permission</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">120</span> <span class="k">elif</span> <span class="n">is_notebook</span><span class="p">():</span>
-<span class="g g-Whitespace">    </span><span class="mi">121</span>     <span class="n">notebook_login</span><span class="p">(</span><span class="n">new_session</span><span class="o">=</span><span class="n">new_session</span><span class="p">,</span> <span class="n">write_permission</span><span class="o">=</span><span class="n">write_permission</span><span class="p">)</span>
-
-<span class="nn">File ~/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/huggingface_hub/_login.py:410,</span> in <span class="ni">_login</span><span class="nt">(token, add_to_git_credential, write_permission)</span>
-<span class="g g-Whitespace">    </span><span class="mi">408</span> <span class="n">_save_token</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">token_name</span><span class="o">=</span><span class="n">token_name</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">409</span> <span class="c1"># Set active token</span>
-<span class="ne">--&gt; </span><span class="mi">410</span> <span class="n">_set_active_token</span><span class="p">(</span><span class="n">token_name</span><span class="o">=</span><span class="n">token_name</span><span class="p">,</span> <span class="n">add_to_git_credential</span><span class="o">=</span><span class="n">add_to_git_credential</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">411</span> <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Login successful.&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">412</span> <span class="k">if</span> <span class="n">_get_token_from_environment</span><span class="p">():</span>
-
-<span class="nn">File ~/opt/anaconda3/envs/class_ml/lib/python3.12/site-packages/huggingface_hub/_login.py:455,</span> in <span class="ni">_set_active_token</span><span class="nt">(token_name, add_to_git_credential)</span>
-<span class="g g-Whitespace">    </span><span class="mi">453</span> <span class="n">token</span> <span class="o">=</span> <span class="n">_get_token_by_name</span><span class="p">(</span><span class="n">token_name</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">454</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">455</span>     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Token </span><span class="si">{</span><span class="n">token_name</span><span class="si">}</span><span class="s2"> not found in </span><span class="si">{</span><span class="n">constants</span><span class="o">.</span><span class="n">HF_STORED_TOKENS_PATH</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">456</span> <span class="k">if</span> <span class="n">add_to_git_credential</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">457</span>     <span class="k">if</span> <span class="n">_is_git_credential_helper_configured</span><span class="p">():</span>
-
-<span class="ne">ValueError</span>: Token qlora not found in /Users/tchun/.cache/huggingface/stored_tokens
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: huggingface_hub in /usr/local/lib/python3.10/dist-packages (0.24.7)
+Requirement already satisfied: filelock in /usr/local/lib/python3.10/dist-packages (from huggingface_hub) (3.16.1)
+Requirement already satisfied: fsspec&gt;=2023.5.0 in /usr/local/lib/python3.10/dist-packages (from huggingface_hub) (2024.6.1)
+Requirement already satisfied: packaging&gt;=20.9 in /usr/local/lib/python3.10/dist-packages (from huggingface_hub) (24.1)
+Requirement already satisfied: pyyaml&gt;=5.1 in /usr/local/lib/python3.10/dist-packages (from huggingface_hub) (6.0.2)
+Requirement already satisfied: requests in /usr/local/lib/python3.10/dist-packages (from huggingface_hub) (2.32.3)
+Requirement already satisfied: tqdm&gt;=4.42.1 in /usr/local/lib/python3.10/dist-packages (from huggingface_hub) (4.66.5)
+Requirement already satisfied: typing-extensions&gt;=3.7.4.3 in /usr/local/lib/python3.10/dist-packages (from huggingface_hub) (4.12.2)
+Requirement already satisfied: charset-normalizer&lt;4,&gt;=2 in /usr/local/lib/python3.10/dist-packages (from requests-&gt;huggingface_hub) (3.4.0)
+Requirement already satisfied: idna&lt;4,&gt;=2.5 in /usr/local/lib/python3.10/dist-packages (from requests-&gt;huggingface_hub) (3.10)
+Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in /usr/local/lib/python3.10/dist-packages (from requests-&gt;huggingface_hub) (2.2.3)
+Requirement already satisfied: certifi&gt;=2017.4.17 in /usr/local/lib/python3.10/dist-packages (from requests-&gt;huggingface_hub) (2024.8.30)
+The token has not been saved to the git credentials helper. Pass `add_to_git_credential=True` in this function directly or `--add-to-git-credential` if using via `huggingface-cli` if you want to set the git credential as well.
+Token is valid (permission: write).
+Your token has been saved to /root/.cache/huggingface/token
+Login successful
 </pre></div>
 </div>
 </div>

@@ -30,13 +30,22 @@
   <link href="../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=f0c89327" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=d2032c04" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=f0c89327" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/theme.css?v=a243ae73" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
@@ -63,6 +72,21 @@
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'week2/1.DecisionTree';</script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/searchtools.js?v=63a53a7d"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../_static/language_data.js?v=d4673a71"></script>
+    <script src="../_static/copybutton_funcs.js?v=776a791e"></script>
+    <script src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../_static/scripts/bootstrap.js?v=7583a70d"></script>
+    <script src="../_static/scripts/fontawesome.js?v=9b125980"></script>
+    <script src="../_static/scripts/pydata-sphinx-theme.js?v=f62441ba"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="What is Principal Component Analysis?" href="2.PCA.html" />
@@ -166,7 +190,7 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="../intro.html">
-                    Welcome to your Jupyter Book
+                    Classic Machine Learning Book
                 </a>
             </li>
         </ul>
@@ -456,9 +480,7 @@
 <li><p>Subset your data by the threshold you found using the above metrics.</p></li>
 <li><p>Iterate this until the last leaf node</p></li>
 </ol>
-<div>
-<img src="DecisionTree.png" width="700">
-</div>
+<p><img alt="DecisionTree.png" src="week2/attachment:4fa43aa6-6687-4023-a62c-885602c25ed5.png" /></p>
 </section>
 <section id="metrics-for-splitting">
 <h2>3. Metrics for splitting<a class="headerlink" href="#metrics-for-splitting" title="Link to this heading">#</a></h2>
@@ -619,18 +641,6 @@
     <span class="n">pw</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;petal width&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mf">1.198667</span>
 <span class="p">)[[</span><span class="s1">&#39;sl&#39;</span><span class="p">,</span><span class="s1">&#39;sw&#39;</span><span class="p">,</span><span class="s1">&#39;pl&#39;</span><span class="p">,</span><span class="s1">&#39;pw&#39;</span><span class="p">]]</span>
 <span class="n">iris2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">X2</span><span class="p">,</span><span class="n">y</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">folders</span><span class="o">/</span><span class="n">td</span><span class="o">/</span><span class="mi">1</span><span class="n">zp1k2xj2m5dwylk8w2lttg80000gn</span><span class="o">/</span><span class="n">T</span><span class="o">/</span><span class="n">ipykernel_3294</span><span class="o">/</span><span class="mf">27703058.</span><span class="n">py</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span>     <span class="n">pw</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;petal width&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mf">1.198667</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="p">)[[</span><span class="s1">&#39;sl&#39;</span><span class="p">,</span><span class="s1">&#39;sw&#39;</span><span class="p">,</span><span class="s1">&#39;pl&#39;</span><span class="p">,</span><span class="s1">&#39;pw&#39;</span><span class="p">]]</span>
-<span class="ne">----&gt; </span><span class="mi">7</span> <span class="n">iris2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">X2</span><span class="p">,</span><span class="n">y</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-<span class="ne">NameError</span>: name &#39;pd&#39; is not defined
 </pre></div>
 </div>
 </div>
